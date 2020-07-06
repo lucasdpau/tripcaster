@@ -12,6 +12,7 @@ class UiWrapper extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
     
+    // handle change for multiple forms
     handleChange(event) {
         this.setState({[event.target.name]: event.target.value,
                         });
@@ -32,12 +33,13 @@ class UiWrapper extends React.Component {
 
     render() {
         return (
-            //React.createElement('div', null, 'qq')
             Ele('div', null, 
-                Ele(cityAddForm, {addCities: this.addCities, 
-                    cityName: this.cityName,
-                    days: this.days,
-                    handleChange: this.handleChange}),
+                Ele(cityAddForm, {
+                    addCities: this.addCities, 
+                    cityName: this.state.cityName,
+                    days: this.state.days,
+                    handleChange: this.handleChange
+                }),
                 Ele('div', null, `${this.state.citiesList}`), 
                 )
         );
