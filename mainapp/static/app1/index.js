@@ -1,3 +1,64 @@
+// createa shortcut so we don't go crazy 
+const Ele = React.createElement;
+
+class UiWrapper extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            cityName: '',
+            citiesList: ['asd', 'asdas'],
+            days: 0
+        };
+    }
+
+    addCities = (city) => {
+        // update the city list by adding a new city
+        var newCitiesList = this.state.citiesList;
+        newCitiesList.push(city);
+        this.setState({citiesList: newCitiesList});
+    }
+
+    render() {
+        return (
+            //React.createElement('div', null, 'qq')
+            Ele('div', null, 
+                Ele(cityAddForm, {}),
+                Ele('div', null, `${this.state.citiesList}`), 
+                Ele(cityAddButton, {addCities: this.addCities}),
+                )
+        );
+    }
+}
+
+function cityAddForm(props) {
+    return (
+        Ele('form', {}, 
+            Ele('label', {'htmlFor':'city'}, 'City'),
+            Ele('input', {'type': 'text', 'name': 'city', 'id':'city'}),
+            Ele('br',null,null),
+            Ele('label', {'htmlFor':'days_in_city'}, 'Days in City'),
+            Ele('input', {'type': 'number', 'name': 'days_in_city', 'id':'days_in_city', 'min': '1'}),
+            Ele('br', null, null),
+            Ele('input', {'type': 'button', 'id':'addCityButton', 'value': 'Add City'}),
+            Ele('br', null, null),
+            Ele('input', {'type': 'submit'}),
+
+        )
+    );
+}
+
+function cityAddButton(props) {
+    return(
+        Ele('button', {onClick: () => props.addCities('toronto')},'asd')
+    );
+}
+
+ReactDOM.render(
+  React.createElement(UiWrapper, null),
+  document.getElementById('root')
+);
+
+
 var cityList = [];
 
 const addCityButton = document.getElementById("addCityButton");
@@ -16,51 +77,3 @@ function addCity() {
     daysInCityInput.value = 1;
 
 }
-
-function drawcityWeatherCards() {
-
-}
-
-class uiWrapper extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            cityList: [],
-        };
-    }
-
-    renderCityCard(index) {
-        return (
-            React.createElement(cityWeatherCard, 
-                {cityName: this.state.cityList[index]},
-                )
-        );
-    }
-
-    render() {
-        return (
-            React.createElement('div', null, `${this.state.cityList}`)
-        )
-    }
-}
-
-class cityWeatherCard extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            cityName: this.props.cityName,
-        };
-    }
-    render() {
-        return (
-            React.createElement('div', null, 
-                React.createElement('p', null, 'blah')
-            )
-        );
-    }
-}
-
-ReactDOM.render(
-    React.createElement(uiWrapper),
-    document.getElementById('root')
-);
