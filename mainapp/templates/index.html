@@ -1,0 +1,27 @@
+{%extends "basetemplate.html" %}
+    {%block title %}
+	    <title>Main Page</title>
+    {%endblock%}
+    {%block content%}
+    {% load static %}
+    <body class="index_wrapper">
+        Please note that weather forecast accuracy is much lower past the 10 day mark. 
+        <form action="/" method="GET">
+            <label for="city">City</label>
+            <input type="text" name="city" id="city"><br>
+            <label for="days_in_city">Days in City</label>
+            <input type="number" name="days_in_city" id="days_in_city" min=1><br>
+            <input type="button" id="addCityButton" value="Add city"> <br>
+            <input type="submit">
+        </form>
+        <div id="root">
+
+        </div>
+        <!-- Load React. -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+        <!-- Load our React component. -->
+        <script src="{% static 'app1/index.js' %}"></script>
+    </body>
+    {%endblock%}
