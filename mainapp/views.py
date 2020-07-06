@@ -24,8 +24,15 @@ def get_weather_for_city_dict(city_dict):
     #pings the api and populates the city_dict with the response
     for city in city_dict:
         weather_at_city = requests.get(wb_api_url.format(city))
-        weather_json = weather_at_city.json()
-        city_dict[city]['weather']  = weather_json
+        #if city name is invalid, api returns blank response
+        if weather_at_city.status_code == 200:
+            weather_json = weather_at_city.json()
+            city_dict[city]['weather']  = weather_json
+        elif weather_at_city.status_code == 204:
+            city_dict[city]['weather'] = "error 204, perhaps you provided an invalid city?"
+        else:
+            city_dict[city]['weather'] = ("error " + str(weather_at_city.status_code))
+
     return city_dict
 
 def ordered_list_of_weather_reports(city_dict, city_list):
@@ -34,14 +41,17 @@ def ordered_list_of_weather_reports(city_dict, city_list):
     report_list = []
     for index in range(0, len(city_list)):
         city_name = city_list[index]
-        weather_report = city_dict[city_name]['weather']['data'][index]
-        city_weather_object = {'city': city_name, 'data' : weather_report}
-        report_list.append(city_weather_object)
+        if type(city_dict[city_name]['weather']) != str:
+            weather_report = city_dict[city_name]['weather']['data'][index]
+            city_weather_object = {'city': city_name, 'data' : weather_report}
+            report_list.append(city_weather_object)
+        else:
+            city_weather_object = {'city': city_name, 'data' : city_dict[city_name]['weather']}
+            report_list.append(city_weather_object)
     return report_list
 
 def index_view(req):
-    city_names = req.GET.get("city")
-    #this code only fires if a city name is in the query string
+    city_names = req.GET.get("cities")
     if city_names:
         print(city_names)
         weather_at_city = requests.get(wb_api_url.format(city_names))
@@ -55,3 +65,10 @@ def index_view(req):
         else:
             return HttpResponse("error " + str(weather_at_city.status_code))
     return render(req, "index.html", )
+
+def results_view(req):
+    city_name_list = req.GET.getlist("cities")
+    city_dict = city_list_to_dict(city_name_list)
+    city_dict_plus_weather = get_weather_for_city_dict(city_dict)
+    ordered_list = ordered_list_of_weather_reports(city_dict_plus_weather, city_name_list)
+    return HttpResponse(ordered_list)

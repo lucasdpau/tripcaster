@@ -1,7 +1,7 @@
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, Client
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-import requests, os
-from mainapp.views import city_list_to_dict, get_weather_for_city_dict, ordered_list_of_weather_reports
+import requests, os, json
+from mainapp.views import city_list_to_dict, get_weather_for_city_dict, ordered_list_of_weather_reports, results_view
 
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 WEATHERBIT_API_KEY = os.environ.get("WEATHERBIT_API_KEY")
@@ -38,6 +38,8 @@ class View_Functions(SimpleTestCase):
         self.assertEqual(city_list_to_dict(city_list), city_dict)
 
     def test_add_weather_to_city_dict(self):
+        # add JSON object with the weather report from the api response.
+        #eg. [{'city':'nyc', 'weather':{...}}]
         city_dict = {'nyc': {'dates': [0,1]}, 'rome': {'dates': [2,3,5]}, 'berlin':{'dates':[4]}}
         self.assertIn('weather', get_weather_for_city_dict(city_dict)['nyc'])
 
@@ -50,4 +52,13 @@ class View_Functions(SimpleTestCase):
         self.assertEquals('rome', ordered_list_of_weather_reports(city_dict, city_list)[2]['city'])
         self.assertEquals('berlin', ordered_list_of_weather_reports(city_dict, city_list)[4]['city'])
         self.assertIn('high_temp', ordered_list_of_weather_reports(city_dict, city_list)[4]['data'])
-        print(ordered_list_of_weather_reports(city_dict, city_list))
+        result = ordered_list_of_weather_reports(city_dict, city_list)
+        print(json.dumps(result, indent=4, sort_keys=True))
+
+    def test_client_request(self):
+        test_client = Client()
+        response = test_client.get('/results', {
+                'cities': ['toronto', 'toronto', 
+                'toronto', 'tokyo', 'tokyo', 'tokyo',] 
+                })
+        

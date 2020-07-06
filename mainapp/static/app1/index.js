@@ -8,6 +8,7 @@ class UiWrapper extends React.Component {
             cityName: '',
             citiesList: [],
             days: 1,
+            queryString: '?',
         };
         this.handleChange = this.handleChange.bind(this);
     }
@@ -16,24 +17,49 @@ class UiWrapper extends React.Component {
     handleChange(event) {
         this.setState({[event.target.name]: event.target.value,
                         });
-        console.log("cityName is " + this.state.cityName);
-        console.log('days is ' + this.state.days);
     }
 
     addCities = () => {
         // update the city list by adding a new city
         let newCitiesList = this.state.citiesList;
         let city = this.state.cityName;
-        for (let i=0; i<this.state.days; i++) {
-            newCitiesList.push(city);
-            console.log(i + " " + city);
+        if (city != '') {
+            for (let i=0; i<this.state.days; i++) {
+                newCitiesList.push(city);
+            }
+            if (newCitiesList.length > 16) {
+                console.log("CityList is too long (max 16).");
+                newCitiesList.splice(15);
+            }
+            this.setState({citiesList: newCitiesList, days: 1, cityName: ''});
+            this.updateQueryString();
+        } else {
+            console.log("City name cannot be blank.");
         }
-        this.setState({citiesList: newCitiesList, days: 1, cityName: ''});
+    }
+
+    removeCities = (index) => {
+        // splice removes elements starting from index specified by 1st argument
+        // 2nd argument is how many elements to remove. it returns array of removed elements
+        let newCitiesList = this.state.citiesList;
+        newCitiesList.splice(index, 1);
+        this.setState({citiesList: newCitiesList});
+        this.updateQueryString();
+    }
+
+    updateQueryString = () => {
+        let newQueryString = '?'
+        for (let i=0; i<this.state.citiesList.length; i++) {
+            newQueryString += "&cities=" + this.state.citiesList[i];
+        }
+        this.setState({queryString: newQueryString});
+        console.log("querystring is: " + this.state.queryString);
     }
 
     render() {
         return (
             Ele('div', null, 
+                Ele(cityWeatherCards, {}),
                 Ele(cityAddForm, {
                     addCities: this.addCities, 
                     cityName: this.state.cityName,
@@ -44,6 +70,12 @@ class UiWrapper extends React.Component {
                 )
         );
     }
+}
+
+function cityWeatherCards(props) {
+    return(
+        Ele('div', {}, 'weather cards here')
+    );
 }
 
 class cityAddForm extends React.Component {
