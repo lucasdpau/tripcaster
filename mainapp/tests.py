@@ -14,19 +14,12 @@ class WEATHERBIT_TestCase(SimpleTestCase):
     # docs at https://www.weatherbit.io/api/weather-forecast-16-day
     # base url https://api.weatherbit.io/v2.0/forecast/daily
     # example request: 
-    #https://api.weatherbit.io/v2.0/forecast/daily?city=Raleigh,NC&key=API_KEY
-    def test_request_works_and_status_200(self):
-        api_url = "https://api.weatherbit.io/v2.0/forecast/daily?city=Toronto&key=" + WEATHERBIT_API_KEY
-        response = requests.get(api_url)
-        self.assertEqual(response.status_code, 200)
-    
+    #https://api.weatherbit.io/v2.0/forecast/daily?city=Raleigh,NC&key=API_KEY   
     def test_request_correct_city(self):
         api_url = "https://api.weatherbit.io/v2.0/forecast/daily?city=Toronto&key=" + WEATHERBIT_API_KEY
         response = requests.get(api_url)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["city_name"], 'Toronto')
-
-    def test_city_lookup(self):
-        pass
     
 class View_Functions(SimpleTestCase):
 
@@ -48,12 +41,12 @@ class View_Functions(SimpleTestCase):
         #eg. [{'city':'nyc', 'data':{...}}, {'city':'nyc', 'data':{...}}, {'city':'rome', 'data':{...}}....]
         city_list = ['nyc','nyc','rome','rome','berlin','rome']
         city_dict = get_weather_for_city_dict({'nyc': {'dates': [0,1]}, 'rome': {'dates': [2,3,5]}, 'berlin':{'dates':[4]}})
-        self.assertEquals('nyc', ordered_list_of_weather_reports(city_dict, city_list)[0]['city'])
-        self.assertEquals('rome', ordered_list_of_weather_reports(city_dict, city_list)[2]['city'])
-        self.assertEquals('berlin', ordered_list_of_weather_reports(city_dict, city_list)[4]['city'])
+        self.assertEqual('nyc', ordered_list_of_weather_reports(city_dict, city_list)[0]['city'])
+        self.assertEqual('rome', ordered_list_of_weather_reports(city_dict, city_list)[2]['city'])
+        self.assertEqual('berlin', ordered_list_of_weather_reports(city_dict, city_list)[4]['city'])
         self.assertIn('high_temp', ordered_list_of_weather_reports(city_dict, city_list)[4]['data'])
         result = ordered_list_of_weather_reports(city_dict, city_list)
-        print(json.dumps(result, indent=4, sort_keys=True))
+        #print(json.dumps(result, indent=4, sort_keys=True))
 
     def test_client_request(self):
         test_client = Client()
@@ -61,4 +54,22 @@ class View_Functions(SimpleTestCase):
                 'cities': ['toronto', 'toronto', 
                 'toronto', 'tokyo', 'tokyo', 'tokyo',] 
                 })
+        json_response = response.json()
+        self.assertEqual(json_response[0]['city'], 'toronto')
+        self.assertEqual(json_response[4]['city'], 'tokyo')
+        self.assertIn('high_temp', json_response[1]['data'])
+    
+    def test_invalid_city_name(self):
+        #if a bad cityname is sent to the api, no data is sent back and the 
+        # app puts an error message in its place
+        c = Client()
+        response = c.get('/results', {
+                'cities': ['xxxxxx', 'toronto',] 
+                })
+        #print(response.content)
+        json_response = response.json()
+        self.assertEqual("xxxxxx", json_response[0]["city"])
+        self.assertIn('error', json_response[0]['data'])
+        self.assertIsInstance(json_response[0]['data'], str)
+        self.assertNotIsInstance(json_response[0]['data'], dict)
         

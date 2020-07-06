@@ -59,9 +59,11 @@ class UiWrapper extends React.Component {
     render() {
         return (
             Ele('div', null, 
-                Ele(cityWeatherCards, {}),
+                Ele(cityWeatherCards, {
+                    citiesList: this.state.citiesList,
+                    removeCities: this.removeCities,}),
                 Ele(cityAddForm, {
-                    addCities: this.addCities, 
+                    addCities: this.addCities,
                     cityName: this.state.cityName,
                     days: this.state.days,
                     handleChange: this.handleChange
@@ -99,7 +101,8 @@ class cityAddForm extends React.Component {
                 Ele('input', {'type': 'number', 
                             'name': 'days', 
                             'id':'days', 
-                            'min': '1', 
+                            'min': '1',
+                            'max': '16', 
                             'value': this.props.days,
                             'onChange': this.props.handleChange,
                         }),
