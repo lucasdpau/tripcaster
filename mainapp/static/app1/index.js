@@ -43,11 +43,17 @@ class UiWrapper extends React.Component {
         }
     }
 
+    clearCitiesList = () => {
+        let clearedCitiesList = [];
+        this.setState({citiesList: clearedCitiesList, days: 1, cityName: ''});
+        this.updateQueryString();
+    }
+
     removeCities = (index) => {
-        // splice removes elements starting from index specified by 1st argument
-        // 2nd argument is how many elements to remove. it returns array of removed elements
+        // replaces city at index with a placeholder city the api won't recognize
+        // if we removed the city from the list the whole array would shift.
         let newCitiesList = this.state.citiesList;
-        newCitiesList.splice(index, 1);
+        newCitiesList[index] = 'xxxxx';
         this.setState({citiesList: newCitiesList});
         this.updateQueryString();
     }
@@ -76,6 +82,7 @@ class UiWrapper extends React.Component {
                         days: this.state.days,
                         handleChange: this.handleChange,
                         queryString: this.state.queryString,
+                        clearCitiesList: this.clearCitiesList,
                     })), 
                 )
         );
@@ -87,12 +94,21 @@ function cityWeatherCardsArray(props) {
     // TODO using index for keys is not ideal, as we can remove and rearrange 
     //components. it's best to use unique data from the objects, such as the 
     // date or temp. go back to change this when data is iplemented.
+    // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = cities.map((card, index) => 
-        Ele('div', {'key': index, onClick: () => props.removeCities(index)}, card,
-            Ele('p', {}, index))
+        Ele('div', {'key': index},
+            Ele(cityWeatherCard, {card: card, removeCities: props.removeCities, index: index}, index))
     );
     return(
         Ele('div', {}, cityCardArray)
+    );
+}
+
+function cityWeatherCard(props) {
+    return (
+        Ele('div',{}, props.card,
+            Ele('br',null),
+            Ele('button', {'type':'button', onClick: () => props.removeCities(props.index)}, 'Remove'))
     );
 }
 
@@ -112,6 +128,7 @@ class cityAddForm extends React.Component {
 
     render() {
         return (
+            // create the form
             Ele('form', {onSubmit: this.handleSubmit}, 
                 Ele('label', {'htmlFor':'cityName'}, 'City'),
                 Ele('input', {'type': 'text', 
@@ -131,18 +148,14 @@ class cityAddForm extends React.Component {
                             'onChange': this.props.handleChange,
                         }),
                 Ele('br', null, null),
-                Ele(cityAddButton, {addCities: this.props.addCities}),
+                Ele('button', {'type': 'button', onClick: () => this.props.addCities()},'Add City'),
                 Ele('br', null, null),
                 Ele('input', {'type': 'submit'}),
+                Ele('br',{}),
+                Ele('button', {'type': 'button', onClick: () => this.props.clearCitiesList()}, 'Clear')
             )
         );
     }
-}
-
-function cityAddButton(props) {
-    return(
-        Ele('button', {'type': 'button', onClick: () => props.addCities()},'Add City')
-    );
 }
 
 //render uiwrapper, the top element, to the root div 
