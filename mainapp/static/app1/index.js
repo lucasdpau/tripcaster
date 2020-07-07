@@ -1,5 +1,8 @@
-// createa shortcut so we don't go crazy 
+// create a shortcut so we don't go crazy 
 const Ele = React.createElement;
+
+// uiwrapper will be the very top component. it has 2 children: card wrapper and the form
+// card wrapper will have the weather/city cards, forms will have the form functionality and buttons
 
 class UiWrapper extends React.Component {
     constructor(props) {
@@ -15,7 +18,8 @@ class UiWrapper extends React.Component {
     
     // handle change for multiple forms
     handleChange(event) {
-        this.setState({[event.target.name]: event.target.value,
+        this.setState({
+            [event.target.name]: event.target.value,
                         });
     }
 
@@ -27,6 +31,7 @@ class UiWrapper extends React.Component {
             for (let i=0; i<this.state.days; i++) {
                 newCitiesList.push(city);
             }
+            // the api only forecasts 16 days, so we trim the list
             if (newCitiesList.length > 16) {
                 console.log("CityList is too long (max 16).");
                 newCitiesList.splice(15);
@@ -47,6 +52,7 @@ class UiWrapper extends React.Component {
         this.updateQueryString();
     }
 
+    //this will keep the query string updated
     updateQueryString = () => {
         let newQueryString = '?'
         for (let i=0; i<this.state.citiesList.length; i++) {
@@ -59,24 +65,34 @@ class UiWrapper extends React.Component {
     render() {
         return (
             Ele('div', null, 
-                Ele(cityWeatherCards, {
+                "Please note that weather forecast accuracy is much lower past the 10 day mark.",
+                Ele(cityWeatherCardsArray, {
                     citiesList: this.state.citiesList,
                     removeCities: this.removeCities,}),
-                Ele(cityAddForm, {
-                    addCities: this.addCities,
-                    cityName: this.state.cityName,
-                    days: this.state.days,
-                    handleChange: this.handleChange
-                }),
-                Ele('div', null, `${this.state.citiesList}`), 
+                Ele('div', {},                 
+                    Ele(cityAddForm, {
+                        addCities: this.addCities,
+                        cityName: this.state.cityName,
+                        days: this.state.days,
+                        handleChange: this.handleChange,
+                        queryString: this.state.queryString,
+                    })), 
                 )
         );
     }
 }
 
-function cityWeatherCards(props) {
+function cityWeatherCardsArray(props) {
+    let cities = props.citiesList;
+    // TODO using index for keys is not ideal, as we can remove and rearrange 
+    //components. it's best to use unique data from the objects, such as the 
+    // date or temp. go back to change this when data is iplemented.
+    let cityCardArray = cities.map((card, index) => 
+        Ele('div', {'key': index, onClick: () => props.removeCities(index)}, card,
+            Ele('p', {}, index))
+    );
     return(
-        Ele('div', {}, 'weather cards here')
+        Ele('div', {}, cityCardArray)
     );
 }
 
@@ -86,9 +102,17 @@ class cityAddForm extends React.Component {
         this.state = {
         };
     }
+    // when pressing submit, stop default behavior, and go to results page
+    // with the querystring inherited from the form above
+    handleSubmit = (event) => {
+        console.log("submit button pressed");
+        event.preventDefault();
+        window.location = "/results" + this.props.queryString;
+    }
+
     render() {
         return (
-            Ele('form', {}, 
+            Ele('form', {onSubmit: this.handleSubmit}, 
                 Ele('label', {'htmlFor':'cityName'}, 'City'),
                 Ele('input', {'type': 'text', 
                             'name': 'cityName',
@@ -120,6 +144,8 @@ function cityAddButton(props) {
         Ele('button', {'type': 'button', onClick: () => props.addCities()},'Add City')
     );
 }
+
+//render uiwrapper, the top element, to the root div 
 
 ReactDOM.render(
   React.createElement(UiWrapper, null),
