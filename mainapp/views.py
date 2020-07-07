@@ -43,7 +43,8 @@ def ordered_list_of_weather_reports(city_dict, city_list):
         city_name = city_list[index]
         if type(city_dict[city_name]['weather']) != str:
             weather_report = city_dict[city_name]['weather']['data'][index]
-            city_weather_object = {'city': city_name, 'data' : weather_report}
+            # use the city name provided by Api for proper formatting
+            city_weather_object = {'city': city_dict[city_name]['weather']['city_name'], 'data' : weather_report}
             report_list.append(city_weather_object)
         else:
             city_weather_object = {'city': city_name, 'data' : city_dict[city_name]['weather']}
@@ -51,19 +52,6 @@ def ordered_list_of_weather_reports(city_dict, city_list):
     return report_list
 
 def index_view(req):
-    city_names = req.GET.get("cities")
-    if city_names:
-        print(city_names)
-        weather_at_city = requests.get(wb_api_url.format(city_names))
-        if weather_at_city.status_code == 200:
-            for items in weather_at_city.json()['data']:
-                print("Date: " + items['valid_date'] + " High: " + str(items['high_temp']))
-            return HttpResponse(weather_at_city)
-        # if a non-existent city is sent to the API, an empty response 204 is set
-        elif weather_at_city.status_code == 204:
-            return HttpResponse("error 204, perhaps you provided an invalid city?")
-        else:
-            return HttpResponse("error " + str(weather_at_city.status_code))
     return render(req, "index.html", )
 
 def results_view(req):
@@ -75,4 +63,7 @@ def results_view(req):
     city_dict_plus_weather = get_weather_for_city_dict(city_dict)
     ordered_list = ordered_list_of_weather_reports(city_dict_plus_weather, city_name_list)
     # if we don't safe=False then we have to make ordered_list a dict object
-    return JsonResponse(ordered_list, safe=False)
+    context = {} 
+    context['schedule'] = ordered_list
+    print(context)
+    return render(req, "results.html", context)

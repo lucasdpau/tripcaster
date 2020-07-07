@@ -1,0 +1,53 @@
+{%extends "basetemplate.html" %}
+    {%block title %}
+	    <title>Results</title>
+    {%endblock%}
+    {%block content%}
+    {% load static %}
+    <body>
+        <div id="root">
+        </div>
+        <div>
+            templated data here: <br>
+            {% for card in schedule%}
+            <div>
+                <h1>
+                    {{ card.city }}
+                </h1>
+                <h2>
+                    {{ card.data.weather.description }}
+                </h2>
+                <div>
+                    {{ card.data.datetime }}
+                </div>
+                <div>
+                    High: {{ card.data.high_temp }}
+                </div>
+                <div>
+                    Low:  {{ card.data.low_temp }}
+                </div>
+                <div>
+                    P.o.P.: {{ card.data.pop }}
+                </div>
+                <div>
+                    Precip:  {{ card.data.precip }}
+                </div>
+                <div>
+                    Humidity: {{ card.data.rh }}
+                </div>
+                <div>
+                    UV high:  {{ card.data.uv }}
+                </div>
+                {{ card.data }}
+            </div>
+            {% endfor %}
+        </div>
+        <a href="/">Home</a>
+        <!-- Load React. -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+        <!-- Load our React component. -->
+        <script type="text/javascript" src="{% static 'app1/results.js' %}"></script>
+    </body>
+    {%endblock%}
