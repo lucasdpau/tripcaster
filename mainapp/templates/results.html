@@ -18,6 +18,9 @@
                     {{ card.data.weather.description }}
                 </h2>
                 <div>
+                    <img src="{% static 'app1/icons/' %}{{ card.data.weather.icon }}.png">
+                </div>
+                <div>
                     {{ card.data.datetime }}
                 </div>
                 <div>
@@ -27,10 +30,10 @@
                     Low:  {{ card.data.low_temp }}
                 </div>
                 <div>
-                    P.o.P.: {{ card.data.pop }}
+                    P.o.P.: {{ card.data.pop }} %
                 </div>
                 <div>
-                    Precip:  {{ card.data.precip }}
+                    Precip:  {{ card.data.precip }} mm
                 </div>
                 <div>
                     Humidity: {{ card.data.rh }}
@@ -38,7 +41,6 @@
                 <div>
                     UV high:  {{ card.data.uv }}
                 </div>
-                {{ card.data }}
             </div>
             {% endfor %}
         </div>
