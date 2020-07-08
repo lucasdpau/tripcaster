@@ -48,23 +48,23 @@ class View_Functions(SimpleTestCase):
         result = ordered_list_of_weather_reports(city_dict, city_list)
         #print(json.dumps(result, indent=4, sort_keys=True))
 
-'''
+
     def test_client_request(self):
         test_client = Client()
-        response = test_client.get('/results', {
+        response = test_client.get('/api/weatherdata', {
                 'cities': ['toronto', 'toronto', 
                 'toronto', 'tokyo', 'tokyo', 'tokyo',] 
                 })
         json_response = response.json()
-        self.assertEqual(json_response[0]['city'], 'toronto')
-        self.assertEqual(json_response[4]['city'], 'tokyo')
+        self.assertEqual(json_response[0]['city'].lower(), 'toronto')
+        self.assertEqual(json_response[4]['city'].lower(), 'tokyo')
         self.assertIn('high_temp', json_response[1]['data'])
     
     def test_invalid_city_name(self):
         #if a bad cityname is sent to the api, no data is sent back and the 
         # app puts an error message in its place
         c = Client()
-        response = c.get('/results', {
+        response = c.get('/api/weatherdata', {
                 'cities': ['xxxxxx', 'toronto',] 
                 })
         #print(response.content)
@@ -73,6 +73,6 @@ class View_Functions(SimpleTestCase):
         self.assertIn('error', json_response[0]['data'])
         self.assertIsInstance(json_response[0]['data'], str)
         self.assertNotIsInstance(json_response[0]['data'], dict)
-        '''
+        
     
         
