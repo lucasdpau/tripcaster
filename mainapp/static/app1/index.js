@@ -9,8 +9,7 @@ class UiWrapper extends React.Component {
         super(props);
         this.state = {
             cityName: '',
-            citiesList: [],
-            days: 1,
+            citiesList: new Array(16).fill(''),
             queryString: '?',
             selectedSlots: [],
         };
@@ -24,30 +23,38 @@ class UiWrapper extends React.Component {
                         });
     }
 
-    addCities = () => {
-        // update the city list by adding a new city
-        let newCitiesList = this.state.citiesList;
-        let city = this.state.cityName;
-        if (city != '') {
-            for (let i=0; i<this.state.days; i++) {
-                newCitiesList.push(city);
-            }
-            // the api only forecasts 16 days, so we trim the list
-            if (newCitiesList.length > 16) {
-                console.log("City List is too long (max 16).");
-                newCitiesList.splice(15);
-            }
-            this.setState({citiesList: newCitiesList, days: 1, cityName: ''});
-            this.updateQueryString();
-        } else {
-            console.log("City name cannot be blank.");
-        }
+    clearCitiesList = () => {
+        let clearedCitiesList = new Array(16).fill('');
+        this.setState({citiesList: clearedCitiesList, cityName: ''});
+        this.updateQueryString();
     }
 
-    clearCitiesList = () => {
-        let clearedCitiesList = [];
-        this.setState({citiesList: clearedCitiesList, days: 1, cityName: ''});
+    selectCard = (index) => {
+        // selects a card and puts it in 'selected' arary
+        // if card already selected, unselect it 
+        let newSelectedSlots = this.state.selectedSlots.slice();
+        if (newSelectedSlots.includes(index)) {
+            let newSlotsIndex = newSelectedSlots.indexOf(index);
+            newSelectedSlots.splice(newSlotsIndex, 1);
+        } else {
+            newSelectedSlots.push(index);
+        }
+        this.setState({selectedSlots: newSelectedSlots});
+        console.log('you clicked on card #' + index);
+        console.log(this.state.selectedSlots);
+    }
+
+    addCities = () => {
+        // sets the city name of selectd cards to the value in the form's city field then  update the query string 
+        for (let i=0; i<this.state.selectedSlots.length; i++) {
+            let card_number = this.state.selectedSlots[i];
+            this.state.citiesList[card_number] = this.state.cityName;
+        }
+        this.state.cityName = '';
+        let clearedSelectedCitiesArray = [];
+        this.setState({selectedSlots: clearedSelectedCitiesArray})
         this.updateQueryString();
+        console.log('hi');
     }
 
     removeCities = (index) => {
@@ -63,7 +70,11 @@ class UiWrapper extends React.Component {
     updateQueryString = () => {
         let newQueryString = '?'
         for (let i=0; i<this.state.citiesList.length; i++) {
-            newQueryString += "&cities=" + this.state.citiesList[i];
+            let queryCityName = this.state.citiesList[i];
+            if (queryCityName == '') {
+                queryCityName = '_'
+            }
+            newQueryString += "&cities=" + queryCityName;
         }
         this.setState({queryString: newQueryString});
         console.log("querystring is: " + this.state.queryString);
@@ -72,16 +83,16 @@ class UiWrapper extends React.Component {
     render() {
         return (
             Ele('div', null, 
-                "Please note that weather forecast accuracy is dramatically lower past 10 days.",
                 Ele(cityWeatherCardsArray, {
+                    selectCard: this.selectCard,
                     citiesList: this.state.citiesList,
                     removeCities: this.removeCities,
+                    selectedSlots: this.state.selectedSlots,
                     }),
                 Ele('div', {},                 
                     Ele(cityAddForm, {
                         addCities: this.addCities,
                         cityName: this.state.cityName,
-                        days: this.state.days,
                         handleChange: this.handleChange,
                         queryString: this.state.queryString,
                         clearCitiesList: this.clearCitiesList,
@@ -99,7 +110,7 @@ function cityWeatherCardsArray(props) {
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = cities.map((card, index) => 
         Ele('div', {'key': index, },
-            Ele(cityWeatherCard, {card: card, removeCities: props.removeCities, index: index}, index))
+            Ele(cityWeatherCard, {selectedSlots: props.selectedSlots, selectCard: props.selectCard, card: card, removeCities: props.removeCities, index: index}, index))
     );
     return(
         Ele('div', {className: "city_weather_card_wrapper"}, cityCardArray)
@@ -107,12 +118,16 @@ function cityWeatherCardsArray(props) {
 }
 
 function cityWeatherCard(props) {
+    var city_weather_card = "city_weather_card";
+    if (props.selectedSlots.includes(props.index)) {
+        city_weather_card += " selected_card";
+    }
     return (
-        Ele('div',{className: "city_weather_card"},
+        Ele('div',{className: city_weather_card, onClick: () => props.selectCard(props.index)},
             Ele('h2', {className: "centered"}, "Day " + (parseInt(props.index)+1)),
             Ele('h2', {}, props.card),
             Ele('br',null),
-            Ele('button', {'type':'button', className: "formButton", onClick: () => props.removeCities(props.index)}, 'Remove'))
+            Ele('button', {'type':'button', className: "form_button", onClick: () => props.removeCities(props.index)}, 'Remove'))
     );
 }
 
@@ -134,28 +149,27 @@ class cityAddForm extends React.Component {
         return (
             // create the form
             Ele('form', {onSubmit: this.handleSubmit, id: "cityEntryForm"}, 
-                Ele('label', {'htmlFor':'cityName'}, 'City'),
+                Ele('label', {'htmlFor':'cityName', className: 'form_label'}, 'City'),
                 Ele('input', {'type': 'text', 
                             'name': 'cityName',
                             'id':'cityName',
                             'value': this.props.cityName,
                             'onChange': this.props.handleChange, 
+                            className: "form_input"
                             }),
-                Ele('br',null,null),
-                Ele('label', {'htmlFor':'days'}, 'Days in City'),
-                Ele('input', {'type': 'number', 
-                            'name': 'days', 
-                            'id':'days', 
-                            'min': '1',
-                            'max': '16', 
-                            'value': this.props.days,
-                            'onChange': this.props.handleChange,
-                        }),
                 Ele('br', null, null),
-                Ele('button', {'type': 'button', className: "formButton", onClick: () => this.props.addCities()},'Add City'),
-                Ele('button', {'type': 'button', className: "formButton", onClick: () => this.props.clearCitiesList()}, 'Clear'),
+                Ele('button', {'type': 'button',
+                             className: 'form_button', 
+                             onClick: () => this.props.addCities()}, 
+                    'Add City'),
+                Ele('br', null),
+                Ele('button', {'type': 'button', 
+                            className: "form_button", 
+                            onClick: () => this.props.clearCitiesList()}, 
+                    'Clear'),
                 Ele('br', null, null),
-                Ele('input', {'type': 'submit', className: "formButton"}),
+                Ele('input', {'type': 'submit', 
+                            className: "form_button"}),
             )
         );
     }

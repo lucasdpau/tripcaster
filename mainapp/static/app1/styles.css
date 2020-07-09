@@ -18,7 +18,18 @@ a {
 	text-align: center;
 }
 
-.formButton {
+.form_label {
+	margin: 0 20px;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.form_input {
+	padding: 10px;
+	font-size: 2em;
+}
+
+.form_button {
 	padding: 5px;
 	margin: 10px;
 	border: 2px solid black;
@@ -32,6 +43,7 @@ a {
 .city_weather_card_wrapper {
 	display: flex;
 	flex-wrap: wrap;
+	margin: 10px;
 }
 
 .city_weather_card {
@@ -41,6 +53,10 @@ a {
 	padding: 5px;
 	width: 250px;
 	background-color: white;
+}
+
+.selected_card {
+	background-color: steelblue;
 }
 
 .weather_card_high {
