@@ -10,16 +10,27 @@ class UiWrapper extends React.Component {
     }
 
     getCityWeatherData = () => {
-        let listOfCityData = [];
         // AJAX request to get the weather data
-
+        var queryString = window.location.search;
+        var listOfCityData;
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+               listOfCityData = xhttp.responseText;
+               console.log(xhttp.responseText);
+            }
+        };
+        xhttp.open("GET", "/api/weatherdata" + queryString, true);
+        xhttp.send();
+        
         this.setState({cityCardList: listOfCityData});
     }
 
     render() {
         return (
             Ele('div', {}, 'hi',
-                Ele(cityWeatherCard, null))
+                Ele(cityWeatherCard, null),
+                Ele('button', {'type':'button', onClick: () => this.getCityWeatherData()}, 'AJAX here'))
         );
     }
 }
