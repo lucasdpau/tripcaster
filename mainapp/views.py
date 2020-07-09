@@ -39,6 +39,7 @@ def ordered_list_of_weather_reports(city_dict, city_list):
     #returns a list of weather reports in the city and dates we want in order
     #eg. [{'city':'nyc', 'data':{...}}, {'city':'nyc', 'data':{...}}, {'city':'rome', 'data':{...}}....]
     report_list = []
+    invalid_counter = 0
     for index in range(0, len(city_list)):
         city_name = city_list[index]
         if type(city_dict[city_name]['weather']) != str:
@@ -47,8 +48,9 @@ def ordered_list_of_weather_reports(city_dict, city_list):
             city_weather_object = {'city': city_dict[city_name]['weather']['city_name'], 'data' : weather_report}
             report_list.append(city_weather_object)
         else:
-            city_weather_object = {'city': city_name, 'data' : city_dict[city_name]['weather']}
+            city_weather_object = {'city': city_name, 'data': {"valid_date": invalid_counter, 'weather': {"description": city_dict[city_name]['weather']}}}
             report_list.append(city_weather_object)
+            invalid_counter += 1
     return report_list
 
 def index_view(req):

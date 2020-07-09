@@ -74,7 +74,8 @@ class UiWrapper extends React.Component {
                 "Please note that weather forecast accuracy is much lower past the 10 day mark.",
                 Ele(cityWeatherCardsArray, {
                     citiesList: this.state.citiesList,
-                    removeCities: this.removeCities,}),
+                    removeCities: this.removeCities,
+                    }),
                 Ele('div', {},                 
                     Ele(cityAddForm, {
                         addCities: this.addCities,
@@ -96,17 +97,19 @@ function cityWeatherCardsArray(props) {
     // date or temp. go back to change this when data is iplemented.
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = cities.map((card, index) => 
-        Ele('div', {'key': index},
+        Ele('div', {'key': index, },
             Ele(cityWeatherCard, {card: card, removeCities: props.removeCities, index: index}, index))
     );
     return(
-        Ele('div', {}, cityCardArray)
+        Ele('div', {className: "city_weather_card_wrapper"}, cityCardArray)
     );
 }
 
 function cityWeatherCard(props) {
     return (
-        Ele('div',{}, props.card,
+        Ele('div',{className: "city_weather_card"},
+            Ele('h2', {}, "Day " + (parseInt(props.index)+1)),
+            Ele('h2', {}, props.card),
             Ele('br',null),
             Ele('button', {'type':'button', onClick: () => props.removeCities(props.index)}, 'Remove'))
     );

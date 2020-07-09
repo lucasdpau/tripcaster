@@ -70,9 +70,5 @@ class View_Functions(SimpleTestCase):
         #print(response.content)
         json_response = response.json()
         self.assertEqual("xxxxxx", json_response[0]["city"])
-        self.assertIn('error', json_response[0]['data'])
-        self.assertIsInstance(json_response[0]['data'], str)
-        self.assertNotIsInstance(json_response[0]['data'], dict)
-        
-    
-        
+        self.assertIn('error', json_response[0]['data']['weather']['description'])
+        self.assertIsInstance(json_response[0]['data']['weather']['description'], str)    
