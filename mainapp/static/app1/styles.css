@@ -7,6 +7,26 @@
 
 body {
 	background-color: orange;
+	overflow-wrap: anywhere;
+}
+
+a {
+	color: black;
+}
+
+.centered {
+	text-align: center;
+}
+
+.formButton {
+	padding: 5px;
+	margin: 10px;
+	border: 2px solid black;
+	border-radius: 10px;
+	width: 100px;
+	background-color: lightskyblue;
+	font-size: 1.25em;
+	
 }
   
 .city_weather_card_wrapper {
@@ -20,4 +40,19 @@ body {
 	border-width: 1px;
 	padding: 5px;
 	width: 250px;
+	background-color: white;
+}
+
+.weather_card_high {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.weather_card_low {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#cityEntryForm{
+	text-align: center;
 }

@@ -12,6 +12,7 @@ class UiWrapper extends React.Component {
             citiesList: [],
             days: 1,
             queryString: '?',
+            selectedSlots: [],
         };
         this.handleChange = this.handleChange.bind(this);
     }
@@ -71,7 +72,7 @@ class UiWrapper extends React.Component {
     render() {
         return (
             Ele('div', null, 
-                "Please note that weather forecast accuracy is much lower past the 10 day mark.",
+                "Please note that weather forecast accuracy is dramatically lower past 10 days.",
                 Ele(cityWeatherCardsArray, {
                     citiesList: this.state.citiesList,
                     removeCities: this.removeCities,
@@ -108,10 +109,10 @@ function cityWeatherCardsArray(props) {
 function cityWeatherCard(props) {
     return (
         Ele('div',{className: "city_weather_card"},
-            Ele('h2', {}, "Day " + (parseInt(props.index)+1)),
+            Ele('h2', {className: "centered"}, "Day " + (parseInt(props.index)+1)),
             Ele('h2', {}, props.card),
             Ele('br',null),
-            Ele('button', {'type':'button', onClick: () => props.removeCities(props.index)}, 'Remove'))
+            Ele('button', {'type':'button', className: "formButton", onClick: () => props.removeCities(props.index)}, 'Remove'))
     );
 }
 
@@ -132,7 +133,7 @@ class cityAddForm extends React.Component {
     render() {
         return (
             // create the form
-            Ele('form', {onSubmit: this.handleSubmit}, 
+            Ele('form', {onSubmit: this.handleSubmit, id: "cityEntryForm"}, 
                 Ele('label', {'htmlFor':'cityName'}, 'City'),
                 Ele('input', {'type': 'text', 
                             'name': 'cityName',
@@ -151,11 +152,10 @@ class cityAddForm extends React.Component {
                             'onChange': this.props.handleChange,
                         }),
                 Ele('br', null, null),
-                Ele('button', {'type': 'button', onClick: () => this.props.addCities()},'Add City'),
+                Ele('button', {'type': 'button', className: "formButton", onClick: () => this.props.addCities()},'Add City'),
+                Ele('button', {'type': 'button', className: "formButton", onClick: () => this.props.clearCitiesList()}, 'Clear'),
                 Ele('br', null, null),
-                Ele('input', {'type': 'submit'}),
-                Ele('br',{}),
-                Ele('button', {'type': 'button', onClick: () => this.props.clearCitiesList()}, 'Clear')
+                Ele('input', {'type': 'submit', className: "formButton"}),
             )
         );
     }

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-import os, requests
+import os, requests, datetime
 
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 WEATHERBIT_API_KEY = os.environ.get("WEATHERBIT_API_KEY")
@@ -29,7 +29,7 @@ def get_weather_for_city_dict(city_dict):
             weather_json = weather_at_city.json()
             city_dict[city]['weather']  = weather_json
         elif weather_at_city.status_code == 204:
-            city_dict[city]['weather'] = "error 204, perhaps you provided an invalid city?"
+            city_dict[city]['weather'] = "Error 204. Did you provide an invalid city?"
         else:
             city_dict[city]['weather'] = ("error " + str(weather_at_city.status_code))
 
