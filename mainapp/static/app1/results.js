@@ -9,45 +9,52 @@ class UiWrapper extends React.Component {
         };
     }
 
-    getCityWeatherData = () => {
+    componentDidMount() {
         // AJAX request to get the weather data
-        var queryString = window.location.search;
-        var listOfCityData;
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-               listOfCityData = xhttp.responseText;
-               console.log(xhttp.responseText);
+        // arrow notation allows this to refer to the UiWrapper instance
+        // and not the subfunction
+        fetch(window.origin + "/api/weatherdata" + window.location.search)
+        .then(
+            (response) => {
+                if (response.status != 200) {
+                    console.log ("error! status code:" + response.status);
+                    return
+                } else {
+                    return response.json();
+                }
             }
-        };
-        xhttp.open("GET", "/api/weatherdata" + queryString, true);
-        xhttp.send();
-        
-        this.setState({cityCardList: listOfCityData});
+        ).then(
+            (response) => {
+                this.setState({cityCardList: response});
+            }
+        );
     }
-
     render() {
+        let cityWeatherCardArray = this.state.cityCardList.map((card) =>
+            Ele('div', {'key': card.data.valid_date}, 
+                Ele(cityWeatherCard, {cardinfo:card}))
+        );
         return (
-            Ele('div', {}, 'hi',
-                Ele(cityWeatherCard, null),
-                Ele('button', {'type':'button', onClick: () => this.getCityWeatherData()}, 'AJAX here'))
+            Ele('div', {}, cityWeatherCardArray)
         );
     }
 }
 
 function cityWeatherCard(props) {
+    let iconURL = window.origin +"/static/app1/icons/";
     return (
         Ele('div', {}, 
-            Ele('h1', {}, 'City Name here'),
-            Ele('h2', {}, "Weather description here"),
-            Ele('div', {}, "icon here"),
-            Ele('div', {}, 'date here'),
-            Ele('div', {}, "high temp here"),
-            Ele('div', {}, "low temp here"),
-            Ele('div', {}, "percent of precip"),
-            Ele('div', {},'precip here'),
-            Ele('div', {}, 'humidity here'),
-            Ele('div', {}, 'UV here'),
+            Ele('h1', {}, props.cardinfo.city),
+            Ele('h2', {}, props.cardinfo.data.weather.description),
+            Ele('div', {}, 
+                Ele('img', {'src': iconURL + props.cardinfo.data.weather.icon + ".png"})),
+            Ele('div', {}, props.cardinfo.data.valid_date),
+            Ele('div', {}, "High: " + props.cardinfo.data.high_temp),
+            Ele('div', {}, "Low: " + props.cardinfo.data.low_temp),
+            Ele('div', {}, "P.o.P.: " + props.cardinfo.data.pop),
+            Ele('div', {}, "Precipitation: " + props.cardinfo.data.precip + "mm"),
+            Ele('div', {}, "Relative Humidity: " + props.cardinfo.data.rh),
+            Ele('div', {}, "UV: " + props.cardinfo.data.uv),
             )
     );
 }

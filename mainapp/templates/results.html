@@ -7,43 +7,6 @@
     <body>
         <div id="root">
         </div>
-        <div>
-            templated data here: <br>
-            {% for card in schedule%}
-            <div>
-                <h1>
-                    {{ card.city }}
-                </h1>
-                <h2>
-                    {{ card.data.weather.description }}
-                </h2>
-                <div>
-                    <img src="{% static 'app1/icons/' %}{{ card.data.weather.icon }}.png">
-                </div>
-                <div>
-                    {{ card.data.datetime }}
-                </div>
-                <div>
-                    High: {{ card.data.high_temp }}
-                </div>
-                <div>
-                    Low:  {{ card.data.low_temp }}
-                </div>
-                <div>
-                    P.o.P.: {{ card.data.pop }} %
-                </div>
-                <div>
-                    Precip:  {{ card.data.precip }} mm
-                </div>
-                <div>
-                    Humidity: {{ card.data.rh }}
-                </div>
-                <div>
-                    UV high:  {{ card.data.uv }}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
         <a href="/">Home</a>
         <!-- Load React. -->
         <!-- Note: when deploying, replace "development.js" with "production.min.js". -->

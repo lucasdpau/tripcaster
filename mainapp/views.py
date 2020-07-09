@@ -58,14 +58,12 @@ def results_view(req):
     # takes in a request with multiple query parameters of cities
     # eg ?cities=rome&cities=rome&cities=paris and returns a response with the 
     # weather reports
-    city_name_list = req.GET.getlist("cities")
-    city_dict = city_list_to_dict(city_name_list)
-    city_dict_plus_weather = get_weather_for_city_dict(city_dict)
-    ordered_list = ordered_list_of_weather_reports(city_dict_plus_weather, city_name_list)
+    #city_name_list = req.GET.getlist("cities")
+    #city_dict = city_list_to_dict(city_name_list)
+    #city_dict_plus_weather = get_weather_for_city_dict(city_dict)
+    #ordered_list = ordered_list_of_weather_reports(city_dict_plus_weather, city_name_list)
     # if we don't safe=False then we have to make ordered_list a dict object
     context = {} 
-    context['schedule'] = ordered_list
-    print(context)
     return render(req, "results.html", context)
 
 def weatherdata(req):
