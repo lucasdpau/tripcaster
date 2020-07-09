@@ -34,7 +34,7 @@ class UiWrapper extends React.Component {
             }
             // the api only forecasts 16 days, so we trim the list
             if (newCitiesList.length > 16) {
-                console.log("CityList is too long (max 16).");
+                console.log("City List is too long (max 16).");
                 newCitiesList.splice(15);
             }
             this.setState({citiesList: newCitiesList, days: 1, cityName: ''});

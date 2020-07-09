@@ -8,6 +8,17 @@ WEATHERBIT_API_KEY = os.environ.get("WEATHERBIT_API_KEY")
 
 wb_api_url = "https://api.weatherbit.io/v2.0/forecast/daily?city={}&key=" + WEATHERBIT_API_KEY
 
+def format_date(date_string):
+    # the API returns the date in the object in format of "2020-07-11".
+    # return some useful information based on that string
+    weekday_map = {0: "Mon", 1: "Tue", 2: "Wed", 3: "Thu", 4: "Fri", 5: "Sat", 6: "Sun"}
+    new_date = datetime.datetime.strptime(date_string, "%Y-%m-%d")
+    # day of the week eg. mon, wed..
+    weekday = weekday_map[new_date.weekday()]
+    day = str(new_date.day)
+    new_date_string = "{Y}-{m}-{d}".format(Y=str(new_date.year), m=str(new_date.month), d=str(new_date.day))
+    return (new_date_string, weekday, day)
+
 def city_list_to_dict(city_list):
     #get a list of cities ['nyc','nyc','rome','rome','berlin','rome'] and turn into dict like so
     # {'nyc': {'dates': [0,1]}, 'rome': {'dates': [2,3,5]}, 'berlin':{'dates':[4]}}
@@ -45,7 +56,11 @@ def ordered_list_of_weather_reports(city_dict, city_list):
         if type(city_dict[city_name]['weather']) != str:
             weather_report = city_dict[city_name]['weather']['data'][index]
             # use the city name provided by Api for proper formatting
-            city_weather_object = {'city': city_dict[city_name]['weather']['city_name'], 'data' : weather_report}
+            proper_city_name = city_dict[city_name]['weather']['city_name']
+            # add the day of the week to the object
+            weekday = format_date(weather_report['valid_date'])[1]
+            day = format_date(weather_report['valid_date'])[2]
+            city_weather_object = {'city': proper_city_name, 'data' : weather_report, 'weekday': weekday, 'day': day}
             report_list.append(city_weather_object)
         else:
             city_weather_object = {'city': city_name, 'data': {"valid_date": invalid_counter, 'weather': {"description": city_dict[city_name]['weather']}}}

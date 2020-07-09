@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase, Client
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import requests, os, json
-from mainapp.views import city_list_to_dict, get_weather_for_city_dict, ordered_list_of_weather_reports, results_view
+from mainapp.views import format_date, city_list_to_dict, get_weather_for_city_dict, ordered_list_of_weather_reports, results_view
 
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 WEATHERBIT_API_KEY = os.environ.get("WEATHERBIT_API_KEY")
@@ -48,6 +48,12 @@ class View_Functions(SimpleTestCase):
         result = ordered_list_of_weather_reports(city_dict, city_list)
         #print(json.dumps(result, indent=4, sort_keys=True))
 
+    def test_remove_leading_0_from_api_date(self):
+        # July 9, 2020
+        start_date = "2020-07-09"
+        formatted_date = format_date(start_date)
+        self.assertEqual(formatted_date[0], "2020-7-9")
+        self.assertEqual(formatted_date[1], "Thu")
 
     def test_client_request(self):
         test_client = Client()
@@ -70,5 +76,18 @@ class View_Functions(SimpleTestCase):
         #print(response.content)
         json_response = response.json()
         self.assertEqual("xxxxxx", json_response[0]["city"])
-        self.assertIn('error', json_response[0]['data']['weather']['description'])
+        self.assertIn('Error', json_response[0]['data']['weather']['description'])
         self.assertIsInstance(json_response[0]['data']['weather']['description'], str)    
+
+    def test_city_dict_includes_weekday(self):
+        weekdays = ("Mon",  "Tue",  "Wed",  "Thu", "Fri", "Sat", "Sun")
+        recorded_day = ''
+        c = Client()
+        response = c.get('/api/weatherdata', {
+                'cities': ['toronto',] 
+                })
+        json_response = response.json()
+        for day in weekdays:
+            if day == json_response[0]['weekday']:
+                recorded_day = day
+        self.assertEqual(json_response[0]['weekday'], recorded_day)
