@@ -6,7 +6,7 @@
 }
 
 body {
-	background-color: orange;
+	background-color: skyblue;
 	overflow-wrap: anywhere;
 }
 
@@ -35,7 +35,7 @@ a {
 	border: 2px solid black;
 	border-radius: 10px;
 	width: 100px;
-	background-color: lightskyblue;
+	background-color: orange;
 	font-size: 1.25em;
 	
 }
@@ -54,10 +54,27 @@ a {
 	padding: 5px;
 	flex-basis: 14%;
 	background-color: white;
+	min-height: 200px;
+}
+
+.card_city_name_wrapper {
+	display: flex;
+	justify-content: center;
+    flex-direction: column;
+    height: 90%;
 }
 
 .selected_card {
-	background-color: steelblue;
+	background-color: orange;
+	color: white;
+}
+
+.results_city_weather_card_wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: stretch;
+	justify-content: center;
+	margin: 10px;
 }
 
 .weather_card_high {

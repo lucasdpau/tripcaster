@@ -16,8 +16,9 @@ def format_date(date_string):
     # day of the week eg. mon, wed..
     weekday = weekday_map[new_date.weekday()]
     day = str(new_date.day)
+    month_day = datetime.datetime.strftime(new_date, "%b %d")
     new_date_string = "{Y}-{m}-{d}".format(Y=str(new_date.year), m=str(new_date.month), d=str(new_date.day))
-    return (new_date_string, weekday, day)
+    return (new_date_string, weekday, day, month_day)
 
 def city_list_to_dict(city_list):
     #get a list of cities ['nyc','nyc','rome','rome','berlin','rome'] and turn into dict like so
@@ -60,7 +61,8 @@ def ordered_list_of_weather_reports(city_dict, city_list):
             # add the day of the week to the object
             weekday = format_date(weather_report['valid_date'])[1]
             day = format_date(weather_report['valid_date'])[2]
-            city_weather_object = {'city': proper_city_name, 'data' : weather_report, 'weekday': weekday, 'day': day}
+            month_day = format_date(weather_report['valid_date'])[3]
+            city_weather_object = {'city': proper_city_name, 'data' : weather_report, 'weekday': weekday, 'day': day, 'month_day': month_day,}
             report_list.append(city_weather_object)
         else:
             city_weather_object = {'city': city_name, 'data': {"valid_date": invalid_counter, 'weather': {"description": city_dict[city_name]['weather']}}}

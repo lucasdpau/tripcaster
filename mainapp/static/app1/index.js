@@ -12,6 +12,7 @@ class UiWrapper extends React.Component {
             citiesList: new Array(16).fill(''),
             queryString: '?',
             selectedSlots: [],
+            currentDate: new Date()
         };
         this.handleChange = this.handleChange.bind(this);
     }
@@ -94,11 +95,12 @@ class UiWrapper extends React.Component {
     render() {
         return (
             Ele('div', null, 
-                Ele(cityWeatherCardsArray, {
+                Ele(cityCardsArray, {
                     selectCard: this.selectCard,
                     citiesList: this.state.citiesList,
                     removeCities: this.removeCities,
                     selectedSlots: this.state.selectedSlots,
+                    currentDate: this.state.currentDate,
                     }),
                 Ele('div', {},                 
                     Ele(cityAddForm, {
@@ -113,18 +115,17 @@ class UiWrapper extends React.Component {
     }
 }
 
-function cityWeatherCardsArray(props) {
-    let cities = props.citiesList;
+function cityCardsArray(props) {
     // TODO using index for keys is not ideal, as we can remove and rearrange 
-    //components. it's best to use unique data from the objects, such as the 
-    // date or temp. go back to change this when data is iplemented.
+    //components. it's best to use unique data from the objects if possible
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
-    let cityCardArray = cities.map((card, index) => 
-        Ele(cityWeatherCard, {'key': index, 
+    let cityCardArray = props.citiesList.map((card, index) => 
+        Ele(cityCard, {'key': index, 
                             selectedSlots: props.selectedSlots, 
                             selectCard: props.selectCard, 
-                            card: card, 
+                            currentDate: props.currentDate,
                             removeCities: props.removeCities, 
+                            card: card, 
                             index: index})
     );
     return(
@@ -132,17 +133,24 @@ function cityWeatherCardsArray(props) {
     );
 }
 
-function cityWeatherCard(props) {
+function cityCard(props) {
     var city_weather_card = "city_weather_card";
     if (props.selectedSlots.includes(props.index)) {
         city_weather_card += " selected_card";
     }
+    // 1000ms * 60s * 60m * 24hrs = 86,400,000 ms per day
+    // top component has the current date. each card's date is increased by its index
+    // we also want the date formated in short form eg: "Mar 20", "Sep 4"
+    let dateOfThisCard = new Date();
+    dateOfThisCard.setTime(props.currentDate.getTime() + (86400000 * props.index));
+    let monthDay = dateOfThisCard.toDateString().substring(4,10);
     return (
-        Ele('div',{className: city_weather_card, onClick: () => props.selectCard(props.index)},
-            Ele('h2', {className: "centered"}, "Day " + (parseInt(props.index)+1)),
-            Ele('h2', {}, props.card),
-            Ele('br',null),
-            Ele('button', {'type':'button', className: "form_button", onClick: () => props.removeCities(props.index)}, 'Remove'))
+        Ele('div',{className: city_weather_card, 
+                    onClick: () => props.selectCard(props.index)},
+            Ele('h2', {className: "centered"}, monthDay),
+            Ele('div', {className: "card_city_name_wrapper"},
+                Ele('h2', {className: "centered"}, props.card)),
+            )
     );
 }
 

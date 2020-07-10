@@ -23,6 +23,14 @@ class WEATHERBIT_TestCase(SimpleTestCase):
     
 class View_Functions(SimpleTestCase):
 
+    def test_date_format(self):
+        test_date = format_date("2020-07-11")
+        #returned tuple[0] should have the leading 0 of the month removed
+        self.assertEqual(test_date[0], "2020-7-11")
+        self.assertEqual(test_date[1], "Sat")
+        self.assertEqual(test_date[2], "11")
+        self.assertEqual(test_date[3], "Jul 11")
+
     def test_convert_citylist_to_dict(self):
         #get a list of cities ['nyc','nyc','rome','rome','berlin','rome'] and turn into dict like so
         # {'nyc': {'dates': [0,1]}, 'rome': {'dates': [2,3,5]}, 'berlin':{'dates':[4]}}

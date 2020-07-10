@@ -35,7 +35,7 @@ class UiWrapper extends React.Component {
             Ele(cityWeatherCard, {'key': card.data.valid_date, cardinfo:card})
         );
         return (
-            Ele('div', {className: "city_weather_card_wrapper"}, cityWeatherCardArray)
+            Ele('div', {className: "results_city_weather_card_wrapper"}, cityWeatherCardArray)
         );
     }
 }
@@ -52,6 +52,7 @@ function cityWeatherCard(props) {
         return (
             Ele('div', {className: "city_weather_card"}, 
                 Ele('h2', {className: "centered"}, props.cardinfo.weekday),
+                Ele('h2', {className: "centered"}, props.cardinfo.month_day),
                 Ele('h2', {className: "centered"}, props.cardinfo.city),
                 Ele('div', {className: "centered"}, props.cardinfo.data.weather.description),
                 Ele('div', {className: "centered"}, 
