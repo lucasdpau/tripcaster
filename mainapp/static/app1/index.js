@@ -15,6 +15,7 @@ class UiWrapper extends React.Component {
             currentDate: new Date()
         };
         this.handleChange = this.handleChange.bind(this);
+        this.cityEntryRef = React.createRef();
     }
     
     // handle change for multiple forms
@@ -30,7 +31,7 @@ class UiWrapper extends React.Component {
         this.updateQueryString();
     }
 
-    selectCard = (index) => {
+    selectCard = (index, cityEntryRef) => {
         // selects a card and puts it in 'selected' arary
         // if card already selected, unselect it 
         let newSelectedSlots = this.state.selectedSlots.slice();
@@ -41,6 +42,7 @@ class UiWrapper extends React.Component {
             newSelectedSlots.push(index);
         }
         this.setState({selectedSlots: newSelectedSlots});
+        cityEntryRef.focus();
         console.log('you clicked on card #' + index);
         console.log(this.state.selectedSlots);
     }
@@ -96,6 +98,7 @@ class UiWrapper extends React.Component {
         return (
             Ele('div', null, 
                 Ele(cityCardsArray, {
+                    cityEntryRef: this.cityEntryRef,
                     selectCard: this.selectCard,
                     citiesList: this.state.citiesList,
                     removeCities: this.removeCities,
@@ -104,6 +107,7 @@ class UiWrapper extends React.Component {
                     }),
                 Ele('div', {},                 
                     Ele(cityAddForm, {
+                        cityEntryRef: this.cityEntryRef,
                         addCities: this.addCities,
                         cityName: this.state.cityName,
                         handleChange: this.handleChange,
@@ -121,6 +125,7 @@ function cityCardsArray(props) {
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = props.citiesList.map((card, index) => 
         Ele(cityCard, {'key': index, 
+                            cityEntryRef: props.cityEntryRef,
                             selectedSlots: props.selectedSlots, 
                             selectCard: props.selectCard, 
                             currentDate: props.currentDate,
@@ -146,7 +151,7 @@ function cityCard(props) {
     let monthDay = dateOfThisCard.toDateString().substring(4,10);
     return (
         Ele('div',{className: city_weather_card, 
-                    onClick: () => props.selectCard(props.index)},
+                    onClick: () => props.selectCard(props.index, props.cityEntryRef.current)},
             Ele('h2', {className: "centered"}, monthDay),
             Ele('div', {className: "card_city_name_wrapper"},
                 Ele('h2', {className: "centered"}, props.card)),
@@ -163,7 +168,6 @@ class cityAddForm extends React.Component {
     // when pressing submit, stop default behavior, and go to results page
     // with the querystring inherited from the form above
     handleSubmit = (event) => {
-        console.log("submit button pressed");
         event.preventDefault();
         window.location = "/results" + this.props.queryString;
     }
@@ -179,7 +183,8 @@ class cityAddForm extends React.Component {
                             'id':'cityName',
                             'value': this.props.cityName,
                             'onChange': this.props.handleChange, 
-                            className: "form_input"
+                            className: "form_input",
+                            'ref': this.props.cityEntryRef,
                             }),
                 Ele('br', null),
                 Ele('button', {'type': 'button',
