@@ -76,6 +76,17 @@ class UiWrapper extends React.Component {
             }
             newQueryString += "&cities=" + queryCityName;
         }
+        // trim the trailing "&cities=_" from the right end of the querystring
+        var loop = true;
+        while (loop) {
+            let len = newQueryString.length;
+            let endOfQueryString = newQueryString.substring(len-9, len);
+            if (endOfQueryString == "&cities=_") {
+                newQueryString = newQueryString.substring(0, len-9);
+            } else {
+                loop = false;
+            }
+        }
         this.setState({queryString: newQueryString});
         console.log("querystring is: " + this.state.queryString);
     }
@@ -109,8 +120,12 @@ function cityWeatherCardsArray(props) {
     // date or temp. go back to change this when data is iplemented.
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = cities.map((card, index) => 
-        Ele('div', {'key': index, },
-            Ele(cityWeatherCard, {selectedSlots: props.selectedSlots, selectCard: props.selectCard, card: card, removeCities: props.removeCities, index: index}, index))
+        Ele(cityWeatherCard, {'key': index, 
+                            selectedSlots: props.selectedSlots, 
+                            selectCard: props.selectCard, 
+                            card: card, 
+                            removeCities: props.removeCities, 
+                            index: index})
     );
     return(
         Ele('div', {className: "city_weather_card_wrapper"}, cityCardArray)
@@ -150,6 +165,7 @@ class cityAddForm extends React.Component {
             // create the form
             Ele('form', {onSubmit: this.handleSubmit, id: "cityEntryForm"}, 
                 Ele('label', {'htmlFor':'cityName', className: 'form_label'}, 'City'),
+                Ele('br', null),
                 Ele('input', {'type': 'text', 
                             'name': 'cityName',
                             'id':'cityName',
@@ -157,7 +173,7 @@ class cityAddForm extends React.Component {
                             'onChange': this.props.handleChange, 
                             className: "form_input"
                             }),
-                Ele('br', null, null),
+                Ele('br', null),
                 Ele('button', {'type': 'button',
                              className: 'form_button', 
                              onClick: () => this.props.addCities()}, 
@@ -167,7 +183,7 @@ class cityAddForm extends React.Component {
                             className: "form_button", 
                             onClick: () => this.props.clearCitiesList()}, 
                     'Clear'),
-                Ele('br', null, null),
+                Ele('br', null),
                 Ele('input', {'type': 'submit', 
                             className: "form_button"}),
             )

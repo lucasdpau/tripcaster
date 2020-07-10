@@ -43,6 +43,7 @@ a {
 .city_weather_card_wrapper {
 	display: flex;
 	flex-wrap: wrap;
+	align-content: stretch;
 	margin: 10px;
 }
 
@@ -51,7 +52,7 @@ a {
 	border-color: black;
 	border-width: 1px;
 	padding: 5px;
-	width: 250px;
+	flex-basis: 14%;
 	background-color: white;
 }
 

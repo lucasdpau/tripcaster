@@ -32,8 +32,7 @@ class UiWrapper extends React.Component {
     }
     render() {
         let cityWeatherCardArray = this.state.cityCardList.map((card) =>
-            Ele('div', {'key': card.data.valid_date}, 
-                Ele(cityWeatherCard, {cardinfo:card}))
+            Ele(cityWeatherCard, {'key': card.data.valid_date, cardinfo:card})
         );
         return (
             Ele('div', {className: "city_weather_card_wrapper"}, cityWeatherCardArray)
