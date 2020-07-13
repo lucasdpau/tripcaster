@@ -6,7 +6,7 @@
 }
 
 body {
-	background-color: skyblue;
+	background-color: #6cdaee;
 	overflow-wrap: anywhere;
 }
 
@@ -27,6 +27,7 @@ a {
 .form_input {
 	padding: 10px;
 	font-size: 2em;
+	max-width: 100%;
 }
 
 .form_button {
@@ -35,7 +36,7 @@ a {
 	border: 2px solid black;
 	border-radius: 10px;
 	width: 100px;
-	background-color: orange;
+	background-color: #f79e02;
 	font-size: 1.25em;
 	
 }
@@ -57,6 +58,15 @@ a {
 	min-height: 200px;
 }
 
+@media only screen and (max-width: 425px) {
+	.city_weather_card {
+		flex-basis: 25%;
+	}
+	.city_weather_card h2{
+		font-size: 1em;
+	}
+}
+
 .card_city_name_wrapper {
 	display: flex;
 	justify-content: center;
@@ -65,7 +75,7 @@ a {
 }
 
 .selected_card {
-	background-color: orange;
+	background-color: #f79e02;
 	color: white;
 }
 

@@ -42,7 +42,7 @@ class UiWrapper extends React.Component {
             newSelectedSlots.push(index);
         }
         this.setState({selectedSlots: newSelectedSlots});
-        cityEntryRef.focus();
+        cityEntryRef.focus({preventScroll: true});
         console.log('you clicked on card #' + index);
         console.log(this.state.selectedSlots);
     }
