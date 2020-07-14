@@ -67,7 +67,7 @@ function cityWeatherCard(props) {
                 Ele('h2', {className: "centered"}, props.cardinfo.weekday),
                 Ele('h2', {className: "centered"}, props.cardinfo.month_day),
                 Ele('h2', {className: "centered"}, props.cardinfo.city),
-                Ele('div', {className: "centered"}, props.cardinfo.data.weather.description),
+                Ele('div', {className: "centered results_weather_description"}, props.cardinfo.data.weather.description),
                 Ele('div', {className: "centered results_weather_icon"}, 
                     Ele('img', {'src': iconURL + props.cardinfo.data.weather.icon + ".png"})
                     ),
