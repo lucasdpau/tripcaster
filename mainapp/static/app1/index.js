@@ -1,5 +1,6 @@
 // create a shortcut so we don't go crazy 
 const Ele = React.createElement;
+const maxForecastLength = 14;
 
 // uiwrapper will be the very top component. it has 2 children: card wrapper and the form
 // card wrapper will have the weather/city cards, forms will have the form functionality and buttons
@@ -9,7 +10,7 @@ class UiWrapper extends React.Component {
         super(props);
         this.state = {
             cityName: '',
-            citiesList: new Array(16).fill(''),
+            citiesList: new Array(maxForecastLength).fill(''),
             queryString: '?',
             selectedSlots: [],
             currentDate: new Date()
@@ -26,8 +27,10 @@ class UiWrapper extends React.Component {
     }
 
     clearCitiesList = () => {
-        let clearedCitiesList = new Array(16).fill('');
-        this.setState({citiesList: clearedCitiesList, cityName: ''});
+        let clearedCitiesList = new Array(maxForecastLength).fill('');
+        this.setState({citiesList: clearedCitiesList, 
+                    cityName: '',
+                    selectedSlots: [],});
         this.updateQueryString();
     }
 
@@ -43,8 +46,6 @@ class UiWrapper extends React.Component {
         }
         this.setState({selectedSlots: newSelectedSlots});
         cityEntryRef.focus({preventScroll: true});
-        console.log('you clicked on card #' + index);
-        console.log(this.state.selectedSlots);
     }
 
     addCities = () => {
@@ -58,15 +59,6 @@ class UiWrapper extends React.Component {
         this.setState({selectedSlots: clearedSelectedCitiesArray})
         this.updateQueryString();
         console.log('hi');
-    }
-
-    removeCities = (index) => {
-        // replaces city at index with a placeholder city the api won't recognize
-        // if we removed the city from the list the whole array would shift.
-        let newCitiesList = this.state.citiesList;
-        newCitiesList[index] = 'xxxxx';
-        this.setState({citiesList: newCitiesList});
-        this.updateQueryString();
     }
 
     //this will keep the query string updated
@@ -101,11 +93,10 @@ class UiWrapper extends React.Component {
                     cityEntryRef: this.cityEntryRef,
                     selectCard: this.selectCard,
                     citiesList: this.state.citiesList,
-                    removeCities: this.removeCities,
                     selectedSlots: this.state.selectedSlots,
                     currentDate: this.state.currentDate,
                     }),
-                Ele('div', {},                 
+                Ele('div', {className: "centered entry_form_wrapper"},                 
                     Ele(cityAddForm, {
                         cityEntryRef: this.cityEntryRef,
                         addCities: this.addCities,
@@ -128,8 +119,7 @@ function cityCardsArray(props) {
                             cityEntryRef: props.cityEntryRef,
                             selectedSlots: props.selectedSlots, 
                             selectCard: props.selectCard, 
-                            currentDate: props.currentDate,
-                            removeCities: props.removeCities, 
+                            currentDate: props.currentDate, 
                             card: card, 
                             index: index})
     );
@@ -176,8 +166,6 @@ class cityAddForm extends React.Component {
         return (
             // create the form
             Ele('form', {onSubmit: this.handleSubmit, id: "cityEntryForm"}, 
-                Ele('label', {'htmlFor':'cityName', className: 'form_label'}, 'City'),
-                Ele('br', null),
                 Ele('input', {'type': 'text', 
                             'name': 'cityName',
                             'id':'cityName',
@@ -185,6 +173,7 @@ class cityAddForm extends React.Component {
                             'onChange': this.props.handleChange, 
                             className: "form_input",
                             'ref': this.props.cityEntryRef,
+                            'placeholder': "Enter city name",
                             }),
                 Ele('br', null),
                 Ele('button', {'type': 'button',

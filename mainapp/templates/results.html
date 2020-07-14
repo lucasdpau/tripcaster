@@ -5,11 +5,23 @@
     {%block content%}
     {% load static %}
     <body>
-        <div id="root">
-        </div>
-        <div  class="centered">
-            <a href="/">Create another report</a>
-        </div>
+        <main>
+            <div class="centered">
+                <h2>
+                    Forecast for your itinerary
+                </h2>
+            </div>
+            <div id="root">
+            </div>
+            <div class="centered">
+                <a class="form_button" href="/">Create new report</a>
+            </div>
+        </main>
+        <footer>
+            <span>
+                Created by <a href="https://lucasdpau.github.io">Lucas P.</a>
+            </span>
+        </footer>
         <!-- Load React. -->
         <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
         <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>

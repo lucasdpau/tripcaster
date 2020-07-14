@@ -6,6 +6,7 @@ class UiWrapper extends React.Component {
         super(props);
         this.state = {
             cityCardList: [],
+            loaded: false,
         };
     }
 
@@ -26,14 +27,26 @@ class UiWrapper extends React.Component {
         ).then(
             (response) => {
                 console.log(response);
-                this.setState({cityCardList: response});
+                this.setState({cityCardList: response, loaded: true});
             }
         );
     }
     render() {
-        let cityWeatherCardArray = this.state.cityCardList.map((card) =>
-            Ele(cityWeatherCard, {'key': card.data.valid_date, cardinfo:card})
-        );
+        let cityWeatherCardArray;
+        if (this.state.cityCardList.length == 0) {
+            if (this.state.loaded == true){
+                cityWeatherCardArray = Ele('div', {}, 
+                Ele('h2',{}, 'No Reports'));
+            } else {
+                cityWeatherCardArray = Ele('div', {}, 
+                Ele('h2',{}, 'Loading...'));
+            }
+
+        } else {
+            cityWeatherCardArray = this.state.cityCardList.map((card) =>
+                Ele(cityWeatherCard, {'key': card.data.valid_date, cardinfo:card})
+            );
+        }
         return (
             Ele('div', {className: "results_city_weather_card_wrapper"}, cityWeatherCardArray)
         );
@@ -55,7 +68,7 @@ function cityWeatherCard(props) {
                 Ele('h2', {className: "centered"}, props.cardinfo.month_day),
                 Ele('h2', {className: "centered"}, props.cardinfo.city),
                 Ele('div', {className: "centered"}, props.cardinfo.data.weather.description),
-                Ele('div', {className: "centered"}, 
+                Ele('div', {className: "centered results_weather_icon"}, 
                     Ele('img', {'src': iconURL + props.cardinfo.data.weather.icon + ".png"})
                     ),
                 Ele('div',{},             
