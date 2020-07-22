@@ -1,0 +1,1 @@
+web: gunicorn tripcaster.wsgi --log-file -

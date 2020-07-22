@@ -26,7 +26,6 @@ class UiWrapper extends React.Component {
             }
         ).then(
             (response) => {
-                console.log(response);
                 this.setState({cityCardList: response, loaded: true});
             }
         );

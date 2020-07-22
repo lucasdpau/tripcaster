@@ -58,7 +58,6 @@ class UiWrapper extends React.Component {
         let clearedSelectedCitiesArray = [];
         this.setState({selectedSlots: clearedSelectedCitiesArray})
         this.updateQueryString();
-        console.log('hi');
     }
 
     //this will keep the query string updated
@@ -83,7 +82,6 @@ class UiWrapper extends React.Component {
             }
         }
         this.setState({queryString: newQueryString});
-        console.log("querystring is: " + this.state.queryString);
     }
 
     render() {
