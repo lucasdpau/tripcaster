@@ -1,7 +1,6 @@
 envsetup.bat
 *.wpr
 *.code-workspace
-settings.py
 staticfiles/
 
 # Byte-compiled / optimized / DLL files
