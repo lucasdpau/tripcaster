@@ -2,6 +2,7 @@ envsetup.bat
 *.wpr
 *.code-workspace
 staticfiles/
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -112,3 +113,4 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+node_modules
