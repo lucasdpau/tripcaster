@@ -1,3 +1,6 @@
+var  React = require('react');
+var  ReactDOM = require('react-dom');
+
 // create a shortcut so we don't go crazy 
 const Ele = React.createElement;
 const maxForecastLength = 14;

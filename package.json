@@ -1,0 +1,32 @@
+{
+  "name": "tripcaster",
+  "version": "1.0.0",
+  "description": "Get a weather forecast for all cities on your trip in one page! Instead of checking the forecast of each destination of your trip, just use TripCaster and with a few simple clicks you can get a forecast for the next 16 days at any city of your choice.",
+  "main": "index.js",
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "webpack": "^4.44.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasdpau/tripcaster.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucasdpau/tripcaster/issues"
+  },
+  "homepage": "https://github.com/lucasdpau/tripcaster#readme"
+}
