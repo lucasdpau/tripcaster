@@ -114,6 +114,10 @@ footer a {
 	margin-bottom: 50px;
 }
 
+.results_loader {
+	width: 25px;
+}
+
 .results_weather_description {
 	margin-top: 5px;
 	margin-bottom: 5px;

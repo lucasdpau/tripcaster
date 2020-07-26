@@ -33,14 +33,17 @@ class UiWrapper extends React.Component {
         );
     }
     render() {
+        let loadingGif = window.origin +"/static/app1/loader.gif";
         let cityWeatherCardArray;
+        // The page displays "Loading..." before the fetch request finishes
         if (this.state.cityCardList.length == 0) {
             if (this.state.loaded == true){
                 cityWeatherCardArray = Ele('div', {}, 
                 Ele('h2',{}, 'No Reports'));
             } else {
-                cityWeatherCardArray = Ele('div', {}, 
-                Ele('h2',{}, 'Loading...'));
+                cityWeatherCardArray = Ele('div', {className: "centered"}, 
+                Ele('h2',{}, 'Loading...'),
+                Ele('img', {'src': loadingGif , 'alt': 'Loading', className: "results_loader"},));
             }
 
         } else {

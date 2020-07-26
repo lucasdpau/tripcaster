@@ -48,7 +48,6 @@ class UiWrapper extends React.Component {
             newSelectedSlots.push(index);
         }
         this.setState({selectedSlots: newSelectedSlots});
-        cityEntryRef.focus({preventScroll: true});
     }
 
     addCities = () => {
