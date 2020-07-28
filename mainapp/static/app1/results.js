@@ -9,6 +9,7 @@ class UiWrapper extends React.Component {
         this.state = {
             cityCardList: [],
             loaded: false,
+            expiredReport: false,
         };
     }
 
@@ -29,8 +30,9 @@ class UiWrapper extends React.Component {
             }
         ).then(
             (response) => {
-                this.setState({cityCardList: response["data"], 
+                this.setState({cityCardList: response["city_reports"], 
                                 loaded: true,
+                                expiredReport: response["expired_report"]
                                 });
             }
         );
@@ -40,9 +42,14 @@ class UiWrapper extends React.Component {
         let cityWeatherCardArray;
         // The page displays "Loading..." before the fetch request finishes
         if (this.state.cityCardList.length == 0) {
-            if (this.state.loaded == true){
-                cityWeatherCardArray = Ele('div', {}, 
-                Ele('h2',{}, 'No Reports'));
+            if (this.state.loaded == true) {
+                if (this.state.expiredReport == true) {
+                    cityWeatherCardArray = Ele('div', {}, 
+                    Ele('h2',{}, 'Your report has expired. We hope you enjoyed your trip!'));
+                } else {
+                    cityWeatherCardArray = Ele('div', {}, 
+                    Ele('h2',{}, 'No Reports'));
+                }
             } else {
                 cityWeatherCardArray = Ele('div', {className: "centered"}, 
                 Ele('h2',{}, 'Loading...'),

@@ -70,9 +70,9 @@ class View_Functions(SimpleTestCase):
                 'toronto', 'tokyo', 'tokyo', 'tokyo',] 
                 })
         json_response = response.json()
-        self.assertEqual(json_response[0]['city'].lower(), 'toronto')
-        self.assertEqual(json_response[4]['city'].lower(), 'tokyo')
-        self.assertIn('high_temp', json_response[1]['data'])
+        self.assertEqual(json_response["city_reports"][0]['city'].lower(), 'toronto')
+        self.assertEqual(json_response["city_reports"][4]['city'].lower(), 'tokyo')
+        self.assertIn('high_temp', json_response["city_reports"][1]['data'])
     
     def test_invalid_city_name(self):
         #if a bad cityname is sent to the api, no data is sent back and the 
@@ -83,9 +83,9 @@ class View_Functions(SimpleTestCase):
                 })
         #print(response.content)
         json_response = response.json()
-        self.assertEqual("xxxxxx", json_response[0]["city"])
-        self.assertIn('Error', json_response[0]['data']['weather']['description'])
-        self.assertIsInstance(json_response[0]['data']['weather']['description'], str)    
+        self.assertEqual("xxxxxx", json_response["city_reports"][0]["city"])
+        self.assertIn('Error', json_response["city_reports"][0]['data']['weather']['description'])
+        self.assertIsInstance(json_response["city_reports"][0]['data']['weather']['description'], str)    
 
     def test_city_dict_includes_weekday(self):
         weekdays = ("Mon",  "Tue",  "Wed",  "Thu", "Fri", "Sat", "Sun")
@@ -96,6 +96,15 @@ class View_Functions(SimpleTestCase):
                 })
         json_response = response.json()
         for day in weekdays:
-            if day == json_response[0]['weekday']:
+            if day == json_response["city_reports"][0]['weekday']:
                 recorded_day = day
-        self.assertEqual(json_response[0]['weekday'], recorded_day)
+        self.assertEqual(json_response["city_reports"][0]['weekday'], recorded_day)
+
+    def test_detects_expired_report(self):
+        c = Client()
+        response = c.get('/api/weatherdata', {
+                'reportdate':'1',
+                'cities': ['toronto',] 
+                })
+        json_response = response.json()
+        self.assertEqual(json_response["expired_report"], True)

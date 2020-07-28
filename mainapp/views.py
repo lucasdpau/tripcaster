@@ -107,14 +107,17 @@ def weatherdata(req):
     # we are going to remove 1 city from the front of the list per day offset
     # if offset is greater than length of city, then just return empty city
     # to avoid index out of range
-    if  difference_reportdate_currentdate > len(city_name_list):
+    if  difference_reportdate_currentdate >= len(city_name_list):
         city_name_list = []
-    while difference_reportdate_currentdate > 0:
-        city_name_list.pop(0)
-        difference_reportdate_currentdate -= 1
+        expired_report = True
+    else:
+        expired_report = False
+        while difference_reportdate_currentdate > 0:
+            city_name_list.pop(0)
+            difference_reportdate_currentdate -= 1
     city_dict = city_list_to_dict(city_name_list)
     city_dict_plus_weather = get_weather_for_city_dict(city_dict)
     ordered_list = ordered_list_of_weather_reports(city_dict_plus_weather, city_name_list)
-    response_obj = {"data": ordered_list}
+    response_obj = {"city_reports": ordered_list, "expired_report": expired_report}
 
     return JsonResponse(response_obj, safe=False)
