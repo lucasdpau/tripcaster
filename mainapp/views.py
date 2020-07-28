@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-import os, requests, datetime
+import os, requests, datetime, time 
 
 OPENWEATHER_API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 WEATHERBIT_API_KEY = os.environ.get("WEATHERBIT_API_KEY")
@@ -84,9 +84,37 @@ def weatherdata(req):
     # eg ?cities=rome&cities=rome&cities=paris and returns a response with the 
     # weather reports
     # if we don't safe=False so that we can send a list 
+
+    # 60*60*24
+    SECONDS_IN_DAY = 86400 
+    #current UTC time since epoch in seconds = time.time()
+    current_days_since_epoch = int(time.time()/SECONDS_IN_DAY)
+    report_creation_date = req.GET.get("reportdate")
+
+    # check if report_creation_date is type int
+    try:
+        report_creation_date = int(report_creation_date)
+    except:
+        report_creation_date = current_days_since_epoch
+
+    difference_reportdate_currentdate = current_days_since_epoch - report_creation_date
+    # if for some reason the query string tells us the report was made after today's date, 
+    # assume that it was an error and set it to 0
+    if difference_reportdate_currentdate < 0:
+        difference_reportdate_currentdate = 0
     city_name_list = req.GET.getlist("cities")
+
+    # we are going to remove 1 city from the front of the list per day offset
+    # if offset is greater than length of city, then just return empty city
+    # to avoid index out of range
+    if  difference_reportdate_currentdate > len(city_name_list):
+        city_name_list = []
+    while difference_reportdate_currentdate > 0:
+        city_name_list.pop(0)
+        difference_reportdate_currentdate -= 1
     city_dict = city_list_to_dict(city_name_list)
     city_dict_plus_weather = get_weather_for_city_dict(city_dict)
     ordered_list = ordered_list_of_weather_reports(city_dict_plus_weather, city_name_list)
+    response_obj = {"data": ordered_list}
 
-    return JsonResponse(ordered_list, safe=False)
+    return JsonResponse(response_obj, safe=False)

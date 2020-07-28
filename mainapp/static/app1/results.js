@@ -16,7 +16,8 @@ class UiWrapper extends React.Component {
         // AJAX request to get the weather data
         // arrow notation allows this to refer to the UiWrapper instance
         // and not the subfunction
-        fetch(window.origin + "/api/weatherdata" + window.location.search)
+        let queryString = window.location.search;
+        fetch(window.origin + "/api/weatherdata" + queryString)
         .then(
             (response) => {
                 if (response.status != 200) {
@@ -28,7 +29,9 @@ class UiWrapper extends React.Component {
             }
         ).then(
             (response) => {
-                this.setState({cityCardList: response, loaded: true});
+                this.setState({cityCardList: response["data"], 
+                                loaded: true,
+                                });
             }
         );
     }

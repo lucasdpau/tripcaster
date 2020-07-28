@@ -21,6 +21,13 @@ class UiWrapper extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.cityEntryRef = React.createRef();
     }
+
+    // get days since epoch
+    getDaysSinceEpoch = () => {
+        // 86400 seconds per day * 1000 ms
+        let days = Math.floor(new Date() / (86400000));
+        return days        
+    }
     
     // handle change for multiple forms
     handleChange(event) {
@@ -64,7 +71,8 @@ class UiWrapper extends React.Component {
 
     //this will keep the query string updated
     updateQueryString = () => {
-        let newQueryString = '?'
+        let currentDay = this.getDaysSinceEpoch();
+        let newQueryString = '?reportdate=' + currentDay.toString();
         for (let i=0; i<this.state.citiesList.length; i++) {
             let queryCityName = this.state.citiesList[i];
             if (queryCityName == '') {
