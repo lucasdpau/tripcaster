@@ -1,4 +1,4 @@
-    var  React = require('react');
+var  React = require('react');
 var  ReactDOM = require('react-dom');
 
 // create a shortcut so we don't go crazy 
@@ -8,73 +8,22 @@ const maxForecastLength = 14;
 // uiwrapper will be the very top component. it has 2 children: card wrapper and the form
 // card wrapper will have the weather/city cards, forms will have the form functionality and buttons
 
-class UiWrapper extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            cityName: '',
-            citiesList: new Array(maxForecastLength).fill(''),
-            queryString: '?',
-            selectedSlots: [],
-            currentDate: new Date()
-        };
-        this.handleChange = this.handleChange.bind(this);
-        this.cityEntryRef = React.createRef();
-    }
+function UiWrapperHook() {
 
-    // get days since epoch
-    getDaysSinceEpoch = () => {
-        // 86400 seconds per day * 1000 ms
-        let days = Math.floor(new Date() / (86400000));
-        return days        
-    }
-    
-    // handle change for multiple forms
-    handleChange(event) {
-        this.setState({
-            [event.target.name]: event.target.value,
-                        });
-    }
+    const [cityName, setCityName] = React.useState('');
+    const [citiesList, setcitiesList] = React.useState(new Array(maxForecastLength).fill(''));
+    const [queryString, setQueryString] = React.useState('?');
+    const [selectedSlots, setSelectedSlots] = React.useState([]);
+    const [currentDate, setCurrentDate] = React.useState(new Date());
 
-    clearCitiesList = () => {
-        let clearedCitiesList = new Array(maxForecastLength).fill('');
-        this.setState({citiesList: clearedCitiesList, 
-                    cityName: '',
-                    selectedSlots: [],});
-        this.updateQueryString();
-    }
-
-    selectCard = (index, cityEntryRef) => {
-        // selects a card and puts it in 'selected' arary
-        // if card already selected, unselect it 
-        let newSelectedSlots = this.state.selectedSlots.slice();
-        if (newSelectedSlots.includes(index)) {
-            let newSlotsIndex = newSelectedSlots.indexOf(index);
-            newSelectedSlots.splice(newSlotsIndex, 1);
-        } else {
-            newSelectedSlots.push(index);
-        }
-        this.setState({selectedSlots: newSelectedSlots});
-    }
-
-    addCities = () => {
-        // sets the city name of selectd cards to the value in the form's city field then  update the query string 
-        for (let i=0; i<this.state.selectedSlots.length; i++) {
-            let card_number = this.state.selectedSlots[i];
-            this.state.citiesList[card_number] = this.state.cityName;
-        }
-        this.state.cityName = '';
-        let clearedSelectedCitiesArray = [];
-        this.setState({selectedSlots: clearedSelectedCitiesArray})
-        this.updateQueryString();
-    }
 
     //this will keep the query string updated
     updateQueryString = () => {
-        let currentDay = this.getDaysSinceEpoch();
+        // get days since epoch. 86400 seconds per day * 1000 ms
+        let currentDay = Math.floor(new Date() / (86400000));
         let newQueryString = '?reportdate=' + currentDay.toString();
-        for (let i=0; i<this.state.citiesList.length; i++) {
-            let queryCityName = this.state.citiesList[i];
+        for (let i=0; i<citiesList.length; i++) {
+            let queryCityName = citiesList[i];
             if (queryCityName == '') {
                 queryCityName = '_'
             }
@@ -91,58 +40,58 @@ class UiWrapper extends React.Component {
                 loop = false;
             }
         }
-        this.setState({queryString: newQueryString});
+        setQueryString(newQueryString);
     }
 
-    render() {
-        return (
-            Ele('div', null, 
-                Ele(cityCardsArray, {
-                    cityEntryRef: this.cityEntryRef,
-                    selectCard: this.selectCard,
-                    citiesList: this.state.citiesList,
-                    selectedSlots: this.state.selectedSlots,
-                    currentDate: this.state.currentDate,
-                    }),
-                Ele('div', {className: "centered entry_form_wrapper"},                 
-                    Ele(cityAddForm, {
-                        cityEntryRef: this.cityEntryRef,
-                        addCities: this.addCities,
-                        cityName: this.state.cityName,
-                        handleChange: this.handleChange,
-                        queryString: this.state.queryString,
-                        clearCitiesList: this.clearCitiesList,
-                    })), 
-                )
-        );
+    selectCard = (index) => {
+        // selects a card and puts it in 'selected' array
+        // if card already selected, unselect it 
+        let newSelectedSlots = selectedSlots.slice();
+        if (newSelectedSlots.includes(index)) {
+            let newSlotsIndex = newSelectedSlots.indexOf(index);
+            newSelectedSlots.splice(newSlotsIndex, 1);
+        } else {
+            newSelectedSlots.push(index);
+        }
+        setSelectedSlots(newSelectedSlots);
     }
-}
 
-function UiWrapperHook(props) {
+    addCities = () => {
+        // sets the cityname of selected cards to the value in the form's input field then update the query string 
+        for (let i=0; i<selectedSlots.length; i++) {
+            let card_number = selectedSlots[i];
+            citiesList[card_number] = cityName;
+        }
+        setCityName('');
+        setSelectedSlots([]);
+        updateQueryString();
+    }
 
-    const [cityName, setCityName] = React.useState('');
-    const [citiesList, setcitiesList] = React.useState(new Array(maxForecastLength).fill(''));
-    const [queryString, setQueryString] = React.useState('?');
-    const [selectedSlots, setSelectedSlots] = React.useState([]);
-    const [currentDate, setCurrentDate] = React.useState(new Date());
+
+    clearCitiesList = () => {
+        // remove all city names from the current state of the app
+        let clearedCitiesList = new Array(maxForecastLength).fill('');
+        setcitiesList(clearedCitiesList);
+        setCityName('');
+        setSelectedSlots([]);
+        updateQueryString();
+    }
 
     return (
         Ele('div', null, 
             Ele(cityCardsArray, {
-                cityEntryRef: this.cityEntryRef,
-                selectCard: this.selectCard,
-                citiesList: this.state.citiesList,
-                selectedSlots: this.state.selectedSlots,
-                currentDate: this.state.currentDate,
+                selectCard: selectCard,
+                citiesList: citiesList,
+                selectedSlots: selectedSlots,
+                currentDate: currentDate,
                 }),
             Ele('div', {className: "centered entry_form_wrapper"},                 
-                Ele(cityAddForm, {
-                    cityEntryRef: this.cityEntryRef,
-                    addCities: this.addCities,
-                    cityName: this.state.cityName,
-                    handleChange: this.handleChange,
-                    queryString: this.state.queryString,
-                    clearCitiesList: this.clearCitiesList,
+                Ele(addCitiesFormHook, {
+                    addCities: addCities,
+                    cityName: cityName,
+                    queryString: queryString,
+                    clearCitiesList: clearCitiesList,
+                    setCityName: setCityName,
                 })), 
             )
     );
@@ -154,7 +103,6 @@ function cityCardsArray(props) {
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = props.citiesList.map((card, index) => 
         Ele(cityCard, {'key': index, 
-                            cityEntryRef: props.cityEntryRef,
                             selectedSlots: props.selectedSlots, 
                             selectCard: props.selectCard, 
                             currentDate: props.currentDate, 
@@ -167,6 +115,7 @@ function cityCardsArray(props) {
 }
 
 function cityCard(props) {
+    // set up the css class for this element. adds 'selected card' class if in the select_card array
     var city_weather_card = "city_weather_card";
     if (props.selectedSlots.includes(props.index)) {
         city_weather_card += " selected_card";
@@ -179,7 +128,7 @@ function cityCard(props) {
     let monthDay = dateOfThisCard.toDateString().substring(4,10);
     return (
         Ele('div',{className: city_weather_card, 
-                    onClick: () => props.selectCard(props.index, props.cityEntryRef.current)},
+                    onClick: () => props.selectCard(props.index)},
             Ele('h2', {className: "centered"}, monthDay),
             Ele('div', {className: "card_city_name_wrapper"},
                 Ele('h2', {className: "centered"}, props.card)),
@@ -187,53 +136,44 @@ function cityCard(props) {
     );
 }
 
-class cityAddForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        };
-    }
-    // when pressing submit, stop default behavior, and go to results page
-    // with the querystring inherited from the form above
+function addCitiesFormHook(props) {
+
     handleSubmit = (event) => {
         event.preventDefault();
-        window.location = "/results" + this.props.queryString;
-    }
-
-    render() {
-        return (
-            // create the form
-            Ele('form', {onSubmit: this.handleSubmit, id: "cityEntryForm"}, 
-                Ele('input', {'type': 'text', 
-                            'name': 'cityName',
-                            'id':'cityName',
-                            'value': this.props.cityName,
-                            'onChange': this.props.handleChange, 
-                            className: "form_input",
-                            'ref': this.props.cityEntryRef,
-                            'placeholder': "Enter city name",
-                            }),
-                Ele('br', null),
-                Ele('button', {'type': 'button',
-                             className: 'form_button', 
-                             onClick: () => this.props.addCities()}, 
-                    'Add City'),
-                Ele('br', null),
-                Ele('button', {'type': 'button', 
-                            className: "form_button", 
-                            onClick: () => this.props.clearCitiesList()}, 
-                    'Clear'),
-                Ele('br', null),
-                Ele('input', {'type': 'submit', 
-                            className: "form_button"}),
-            )
-        );
-    }
+        window.location = "/results" + props.queryString;
+    } 
+    return (
+        // create the form
+        Ele('form', {onSubmit: handleSubmit, id: "cityEntryForm"}, 
+            Ele('input', {'type': 'text', 
+                        'name': 'cityName',
+                        'id':'cityName',
+                        'value': props.cityName,
+                        // setCity name to the value in the input field
+                        'onChange': e => props.setCityName(e.target.value), 
+                        className: "form_input",
+                        'placeholder': "Enter city name",
+                        }),
+            Ele('br', null),
+            Ele('button', {'type': 'button',
+                         className: 'form_button', 
+                         onClick: () => props.addCities()}, 
+                'Add City'),
+            Ele('br', null),
+            Ele('button', {'type': 'button', 
+                        className: "form_button", 
+                        onClick: () => props.clearCitiesList()}, 
+                'Clear'),
+            Ele('br', null),
+            Ele('input', {'type': 'submit', 
+                        className: "form_button"}),
+        )
+    );   
 }
 
 //render uiwrapper, the top element, to the root div 
 
 ReactDOM.render(
-  React.createElement(UiWrapper, null),
+  React.createElement(UiWrapperHook, null),
   document.getElementById('root')
 );
