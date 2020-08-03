@@ -19,7 +19,6 @@ class UiWrapper extends React.Component {
             currentDate: new Date()
         };
         this.handleChange = this.handleChange.bind(this);
-        this.cityEntryRef = React.createRef();
     }
 
     // get days since epoch
@@ -44,7 +43,7 @@ class UiWrapper extends React.Component {
         this.updateQueryString();
     }
 
-    selectCard = (index, cityEntryRef) => {
+    selectCard = (index) => {
         // selects a card and puts it in 'selected' arary
         // if card already selected, unselect it 
         let newSelectedSlots = this.state.selectedSlots.slice();
@@ -98,7 +97,6 @@ class UiWrapper extends React.Component {
         return (
             Ele('div', null, 
                 Ele(cityCardsArray, {
-                    cityEntryRef: this.cityEntryRef,
                     selectCard: this.selectCard,
                     citiesList: this.state.citiesList,
                     selectedSlots: this.state.selectedSlots,
@@ -106,7 +104,6 @@ class UiWrapper extends React.Component {
                     }),
                 Ele('div', {className: "centered entry_form_wrapper"},                 
                     Ele(cityAddForm, {
-                        cityEntryRef: this.cityEntryRef,
                         addCities: this.addCities,
                         cityName: this.state.cityName,
                         handleChange: this.handleChange,
@@ -124,7 +121,6 @@ function cityCardsArray(props) {
     // see https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
     let cityCardArray = props.citiesList.map((card, index) => 
         Ele(cityCard, {'key': index, 
-                            cityEntryRef: props.cityEntryRef,
                             selectedSlots: props.selectedSlots, 
                             selectCard: props.selectCard, 
                             currentDate: props.currentDate, 
@@ -149,7 +145,7 @@ function cityCard(props) {
     let monthDay = dateOfThisCard.toDateString().substring(4,10);
     return (
         Ele('div',{className: city_weather_card, 
-                    onClick: () => props.selectCard(props.index, props.cityEntryRef.current)},
+                    onClick: () => props.selectCard(props.index)},
             Ele('h2', {className: "centered"}, monthDay),
             Ele('div', {className: "card_city_name_wrapper"},
                 Ele('h2', {className: "centered"}, props.card)),
@@ -180,7 +176,6 @@ class cityAddForm extends React.Component {
                             'value': this.props.cityName,
                             'onChange': this.props.handleChange, 
                             className: "form_input",
-                            'ref': this.props.cityEntryRef,
                             'placeholder': "Enter city name",
                             }),
                 Ele('br', null),
