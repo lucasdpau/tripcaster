@@ -1,4 +1,4 @@
-var  React = require('react');
+    var  React = require('react');
 var  ReactDOM = require('react-dom');
 
 // create a shortcut so we don't go crazy 
@@ -116,6 +116,30 @@ class UiWrapper extends React.Component {
                 )
         );
     }
+}
+
+function UiWrapperHook(props) {
+
+    return (
+        Ele('div', null, 
+            Ele(cityCardsArray, {
+                cityEntryRef: this.cityEntryRef,
+                selectCard: this.selectCard,
+                citiesList: this.state.citiesList,
+                selectedSlots: this.state.selectedSlots,
+                currentDate: this.state.currentDate,
+                }),
+            Ele('div', {className: "centered entry_form_wrapper"},                 
+                Ele(cityAddForm, {
+                    cityEntryRef: this.cityEntryRef,
+                    addCities: this.addCities,
+                    cityName: this.state.cityName,
+                    handleChange: this.handleChange,
+                    queryString: this.state.queryString,
+                    clearCitiesList: this.clearCitiesList,
+                })), 
+            )
+    );
 }
 
 function cityCardsArray(props) {
