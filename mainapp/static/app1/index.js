@@ -120,6 +120,12 @@ class UiWrapper extends React.Component {
 
 function UiWrapperHook(props) {
 
+    const [cityName, setCityName] = React.useState('');
+    const [citiesList, setcitiesList] = React.useState(new Array(maxForecastLength).fill(''));
+    const [queryString, setQueryString] = React.useState('?');
+    const [selectedSlots, setSelectedSlots] = React.useState([]);
+    const [currentDate, setCurrentDate] = React.useState(new Date());
+
     return (
         Ele('div', null, 
             Ele(cityCardsArray, {
