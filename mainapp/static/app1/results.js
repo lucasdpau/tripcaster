@@ -3,20 +3,13 @@ var  ReactDOM = require('react-dom');
 // create a shortcut so we don't go crazy 
 const Ele = React.createElement;
 
-class UiWrapper extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            cityCardList: [],
-            loaded: false,
-            expiredReport: false,
-        };
-    }
+function UiWrapperHook(props) {
+    const [cityCardList, setCityCardList] = React.useState([]);
+    const [loaded, setLoaded] = React.useState(false);
+    const [expiredReport, setExpiredReport] = React.useState(false);
 
-    componentDidMount() {
-        // AJAX request to get the weather data
-        // arrow notation allows this to refer to the UiWrapper instance
-        // and not the subfunction
+    // we need the empty array in the use effect or else it will keep spamming fetch requests
+    React.useEffect(()=>{
         let queryString = window.location.search;
         fetch(window.origin + "/api/weatherdata" + queryString)
         .then(
@@ -30,41 +23,39 @@ class UiWrapper extends React.Component {
             }
         ).then(
             (response) => {
-                this.setState({cityCardList: response["city_reports"], 
-                                loaded: true,
-                                expiredReport: response["expired_report"]
-                                });
+                setCityCardList(response["city_reports"]);
+                setLoaded(true);
+                setExpiredReport(response["expired_report"]);
             }
         );
-    }
-    render() {
-        let loadingGif = window.origin +"/static/app1/loader.gif";
-        let cityWeatherCardArray;
-        // The page displays "Loading..." before the fetch request finishes
-        if (this.state.cityCardList.length == 0) {
-            if (this.state.loaded == true) {
-                if (this.state.expiredReport == true) {
-                    cityWeatherCardArray = Ele('div', {}, 
-                    Ele('h2',{}, 'Your report has expired. We hope you enjoyed your trip!'));
-                } else {
-                    cityWeatherCardArray = Ele('div', {}, 
-                    Ele('h2',{}, 'No Reports'));
-                }
-            } else {
-                cityWeatherCardArray = Ele('div', {className: "centered"}, 
-                Ele('h2',{}, 'Loading...'),
-                Ele('img', {'src': loadingGif , 'alt': 'Loading', className: "results_loader"},));
-            }
+    }, []);
 
+    let loadingGif = window.origin +"/static/app1/loader.gif";
+    let cityWeatherCardArray;
+    // The page displays "Loading..." before the fetch request finishes
+    if (cityCardList.length == 0) {
+        if (loaded == true) {
+            if (expiredReport == true) {
+                cityWeatherCardArray = Ele('div', {}, 
+                Ele('h2',{}, 'Your report has expired. We hope you enjoyed your trip!'));
+            } else {
+                cityWeatherCardArray = Ele('div', {}, 
+                Ele('h2',{}, 'No Reports'));
+            }
         } else {
-            cityWeatherCardArray = this.state.cityCardList.map((card) =>
-                Ele(cityWeatherCard, {'key': card.data.valid_date, cardinfo:card})
-            );
+            cityWeatherCardArray = Ele('div', {className: "centered"}, 
+            Ele('h2',{}, 'Loading...'),
+            Ele('img', {'src': loadingGif , 'alt': 'Loading', className: "results_loader"},));
         }
-        return (
-            Ele('div', {className: "results_city_weather_card_wrapper"}, cityWeatherCardArray)
+
+    } else {
+        cityWeatherCardArray = cityCardList.map((card) =>
+            Ele(cityWeatherCard, {'key': card.data.valid_date, cardinfo:card})
         );
     }
+    return (
+        Ele('div', {className: "results_city_weather_card_wrapper"}, cityWeatherCardArray)
+    );
 }
 
 function cityWeatherCard(props) {
@@ -99,6 +90,6 @@ function cityWeatherCard(props) {
 }
 
 ReactDOM.render(
-    Ele(UiWrapper, {}), 
+    Ele(UiWrapperHook, {}), 
     document.getElementById('root')
 );
