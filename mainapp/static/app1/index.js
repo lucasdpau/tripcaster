@@ -4,14 +4,13 @@ import AddCitiesForm from './components/AddCitiesForm';
 const ReactDOM = require('react-dom');
 
 const MainPage = () => {
+    const maxForecastLength = 14;
+    const currentDate = new Date();
 
     const [cityName, setCityName] = useState('');
     const [citiesList, setcitiesList] = useState(new Array(maxForecastLength).fill(''));
     const [queryString, setQueryString] = useState('?');
     const [selectedSlots, setSelectedSlots] = useState([]);
-
-    const maxForecastLength = 14;
-    const currentDate = new Date();
 
     //this will keep the query string updated
     const updateQueryString = () => {
