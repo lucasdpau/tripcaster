@@ -1,20 +1,17 @@
 import { React, useState } from 'react';
+import CityCardsArray from './components/CityCardsArray';
+import AddCitiesForm from './components/AddCitiesForm';
 const ReactDOM = require('react-dom');
 
-// create a shortcut so we don't go crazy 
-const maxForecastLength = 14;
-
-// uiwrapper will be the very top component. it has 2 children: card wrapper and the form
-// card wrapper will have the weather/city cards, forms will have the form functionality and buttons
-
-const UiWrapperHook = () => {
+const MainPage = () => {
 
     const [cityName, setCityName] = useState('');
     const [citiesList, setcitiesList] = useState(new Array(maxForecastLength).fill(''));
     const [queryString, setQueryString] = useState('?');
     const [selectedSlots, setSelectedSlots] = useState([]);
-    const [currentDate, setCurrentDate] = useState(new Date());
 
+    const maxForecastLength = 14;
+    const currentDate = new Date();
 
     //this will keep the query string updated
     const updateQueryString = () => {
@@ -84,115 +81,19 @@ const UiWrapperHook = () => {
                 selectedSlots={selectedSlots}
                 currentDate={currentDate}
             />
-            <div className='centered entry_form_wrapper'>
-                <AddCitiesFormHook
-                    addCities={addCities}
-                    cityName={cityName}
-                    queryString={queryString}
-                    clearCitiesList={clearCitiesList}
-                    setCityName={setCityName}
-                />
-            </div>
-        </div>
-    );
-};
-
-const CityCardsArray = (props) => {
-    // TODO using index for keys is not ideal, as we can remove and rearrange 
-    //components. it's best to use unique data from the objects if possible
-    const arrayOfCityCards = props.citiesList.map((card, index) =>
-        <CityCard
-            key={index}
-            selectedSlots={props.selectedSlots}
-            selectCard={props.selectCard}
-            currentDate={props.currentDate}
-            card={card}
-            index={index}
-        />
-    );
-    return (
-        <div
-            className='city_weather_card_wrapper'
-        >
-            {arrayOfCityCards}
-        </div>
-    );
-};
-
-const CityCard = (props) => {
-    // set up the css class for this element. adds 'selected card' class if in the select_card array
-    var city_weather_card = "city_weather_card";
-    if (props.selectedSlots.includes(props.index)) {
-        city_weather_card += " selected_card";
-    }
-    // 1000ms * 60s * 60m * 24hrs = 86,400,000 ms per day
-    // top component has the current date. each card's date is increased by its index
-    // we also want the date formated in short form eg: "Mar 20", "Sep 4"
-    const dateOfThisCard = new Date();
-    dateOfThisCard.setTime(props.currentDate.getTime() + (86400000 * props.index));
-    const monthDay = dateOfThisCard.toDateString().substring(4, 10);
-    return (
-        <div
-            className={city_weather_card}
-            onClick={() => props.selectCard(props.index)}
-        >
-            <h2 className='centered'>
-                {monthDay}
-            </h2>
-            <div className='card_city_name_wrapper'>
-                <h2 className='centered'>
-                    {props.card}
-                </h2>
-            </div>
-        </div>
-    );
-};
-
-const AddCitiesFormHook = (props) => {
-    handleSubmit = (event) => {
-        event.preventDefault();
-        window.location = "/results" + props.queryString;
-    };
-
-    return (
-        <form
-            onsubmit={handleSubmit}
-            id='cityEntryForm'
-        >
-            <input
-                type='text'
-                name='cityName'
-                id='cityName'
-                value={props.cityName}
-                onChange={e => props.setCityName(e.target.value)}
-                className='form_input'
-                placeholder='Enter city name'
+            <AddCitiesForm
+                addCities={addCities}
+                cityName={cityName}
+                queryString={queryString}
+                clearCitiesList={clearCitiesList}
+                setCityName={setCityName}
             />
-            <button
-                type='button'
-                className='form_button'
-                onClick={props.addCities}
-            >
-                Add City
-            </button>
-            <button
-                type='button'
-                className='form_button'
-                onClick={props.clearCitiesList}
-            >
-                Clear
-            </button>
-            <input
-                type='submit'
-                className='form_button'
-            />
-        </form>
+        </div>
     );
-}
+};
 
-//render uiwrapper, the top element, to the root div 
-
+//render to the root div 
 ReactDOM.render(
-    React.createElement(UiWrapperHook, null),
+    React.createElement(MainPage, null),
     document.getElementById('root')
 );
