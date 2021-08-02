@@ -1,5 +1,4 @@
 import { React, useEffect, useState } from 'react';
-import CityWeatherCard from './components/CityWeatherCard';
 import CityWeatherCardArray from './components/CityWeatherCardArray';
 
 const ReactDOM = require('react-dom');
@@ -15,11 +14,10 @@ const UiWrapperHook = () => {
         fetch(window.origin + "/api/weatherdata" + queryString)
             .then(
                 (response) => {
-                    if (response.status != 200) {
-                        console.log("error! status code:" + response.status);
-                        return
-                    } else {
+                    if (response.status === 200) {
                         return response.json();
+                    } else {
+                        throw new Error("error! code: " + response.status)
                     }
                 }
             ).then(

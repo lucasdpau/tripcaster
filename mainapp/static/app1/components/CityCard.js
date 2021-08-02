@@ -9,9 +9,10 @@ const CityCard = (props) => {
     
     // 1000ms * 60s * 60m * 24hrs = 86,400,000 ms per day
     // top component has the current date. each card's date is increased by its index
-    // we also want the date formated in short form eg: "Mar 20", "Sep 4"
     const dateOfThisCard = new Date();
     dateOfThisCard.setTime(props.currentDate.getTime() + (86400000 * props.index));
+
+    // date formated in short form eg: "Mar 20", "Sep 4"
     const monthDay = dateOfThisCard.toDateString().substring(4, 10);
 
     return (

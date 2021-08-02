@@ -1,7 +1,7 @@
 import { React, useState } from 'react';
+import ReactDOM from 'react-dom';
 import CityCardsArray from './components/CityCardsArray';
 import AddCitiesForm from './components/AddCitiesForm';
-const ReactDOM = require('react-dom');
 
 const MainPage = () => {
     const maxForecastLength = 14;

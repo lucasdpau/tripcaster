@@ -3,6 +3,7 @@ envsetup.bat
 *.code-workspace
 staticfiles/
 node_modules/
+static/app1/dist
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

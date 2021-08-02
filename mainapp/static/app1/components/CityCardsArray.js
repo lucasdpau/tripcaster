@@ -12,6 +12,7 @@ const CityCardsArray = (props) => {
             index={index}
         />
     );
+    
     return (
         <div
             className='city_weather_card_wrapper'
